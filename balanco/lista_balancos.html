@@ -852,9 +852,9 @@
                             <i class="fas fa-cog"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
-                            <li><a class="dropdown-item" href="{% url 'perfil' %}"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="../conta/perfil.html"><i class="fas fa-user me-2"></i>Perfil</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                            <li><a class="dropdown-item text-danger" href="#">
                                 <i class="fas fa-sign-out-alt me-2"></i>Sair
                             </a></li>
                         </ul>
@@ -873,30 +873,21 @@
                     </div>
                     <div class="modal-body">
                         <form method="post" action="{% url 'criar_balanco_personalizado' %}" id="formCriarBalanco">
-                            {% csrf_token %}
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label class="form-label">Loja *</label>
                                     <select name="loja_id" class="form-select" required id="selectLoja">
                                         <option value="">Selecione a loja</option>
-                                        {% for loja in todas_lojas %}
-                                            <option value="{{ loja.id }}" 
-                                                    {% if not user.is_superuser and loja not in user.lojas_gerenciadas.all %}disabled{% endif %}>
-                                                {{ loja.nome }} - {{ loja.cidade }}
-                                                {% if not user.is_superuser and loja not in user.lojas_gerenciadas.all %}
-                                                    (Sem permissão)
-                                                {% endif %}
+                                            <option value="{{ loja.id }}">
+                                                Loja_1 - Cidade: Lubango
+                                                Loja_2 - Cidade: Luanda
+                                                Loja_3 - Cidade: Benguela
                                             </option>
-                                        {% empty %}
                                             <option value="">Nenhuma loja cadastrada</option>
-                                        {% endfor %}
                                     </select>
                                     <div class="form-text">
-                                        {% if user.is_superuser %}
                                             <i class="fas fa-shield-alt text-primary"></i> Superusuário: Todas as lojas disponíveis
-                                        {% else %}
                                             <i class="fas fa-user-check text-info"></i> Você pode criar balanços apenas para lojas que gerenciam
-                                        {% endif %}
                                     </div>
                                 </div>
                                 
@@ -957,20 +948,6 @@
             </div>
         </div>
 
-        <!-- Mensagens -->
-        {% if messages %}
-        <div class="row mb-4 fade-in">
-            <div class="col-12">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
         <!-- Filtros -->
         <div class="row mb-4 fade-in">
             <div class="col-12">
@@ -982,38 +959,29 @@
                                     <label class="form-label">Período</label>
                                     <select name="periodo_tipo" class="form-select">
                                         <option value="">Todos</option>
-                                        {% for value, label in periodo_choices %}
                                         <option value="{{ value }}" {% if periodo_tipo_selecionado == value %}selected{% endif %}>{{ label }}</option>
-                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div>
                                     <label class="form-label">Loja</label>
                                     <select name="loja" class="form-select">
                                         <option value="">Todas</option>
-                                        {% for loja in lojas %}
                                         <option value="{{ loja.id }}" {% if loja_selecionada == loja.id|stringformat:"i" %}selected{% endif %}>{{ loja.nome }}</option>
-                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div>
                                     <label class="form-label">Ano</label>
                                     <select name="ano" class="form-select">
                                         <option value="todos">Todos os anos</option>
-                                        {% for ano in anos_disponiveis %}
                                         <option value="{{ ano }}" {% if ano_selecionado == ano|stringformat:"i" %}selected{% endif %}>{{ ano }}</option>
-                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div>
                                     <label class="form-label">Mês</label>
                                     <select name="mes" class="form-select">
                                         <option value="">Todos os meses</option>
-                                        {% for i in "123456789101112" %}
                                         <option value="{{ i }}" {% if mes_selecionado == i %}selected{% endif %}>
-                                            {{ i }}º Mês
                                         </option>
-                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-12">
@@ -1021,7 +989,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-filter me-1"></i>Filtrar
                                         </button>
-                                        <a href="{% url 'lista_balancos' %}" class="btn btn-outline-secondary">
+                                        <a href="lista_balancos.html" class="btn btn-outline-secondary">
                                             <i class="fas fa-times me-1"></i>Limpar
                                         </a>
                                     </div>
@@ -1040,8 +1008,8 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Vendas</h5>
-                            <h2 class="mb-0">Kz {{ total_vendas|default:0|floatformat:2 }}</h2>
-                            <small>{{ total_balancos }} balanços</small>
+                            <h2 class="mb-0">Kz 100.000</h2>
+                            <small>balanços</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
                             <i class="fas fa-shopping-cart fa-3x opacity-50"></i>
@@ -1055,7 +1023,7 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Geral</h5>
-                            <h2 class="mb-0">Kz {{ total_geral|default:0|floatformat:2 }}</h2>
+                            <h2 class="mb-0">Kz 50.000</h2>
                             <small>Soma dos totais gerais</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
@@ -1070,7 +1038,7 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Arrecadado</h5>
-                            <h2 class="mb-0">Kz {{ total_arrecadado|default:0|floatformat:2 }}</h2>
+                            <h2 class="mb-0">Kz 50.000</h2>
                             <small>Soma dos totais arrecadados</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
@@ -1089,16 +1057,15 @@
                         <div>
                             <h5 class="card-title mb-0">Lista de Balanços</h5>
                             <small class="text-muted">
-                                Mostrando {{ balancos.start_index }} - {{ balancos.end_index }} de {{ balancos.paginator.count }} balanços
+                                Mostrando
                             </small>
                         </div>
                         <div>
-                            <span class="badge bg-primary">{{ balancos.paginator.count }} totais</span>
+                            <span class="badge bg-primary">totais</span>
                             <span class="badge bg-secondary ms-1">4 por página</span>
                         </div>
                     </div>
                     <div class="card-body">
-                        {% if balancos %}
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -1114,56 +1081,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for balanco in balancos %}
                                     <tr>
                                         <td>
-                                            <strong>{{ balanco.loja.nome }}</strong>
+                                            <strong>Loja_1</strong>
                                             <br>
-                                            <small class="text-muted">{{ balanco.loja.cidade }}</small>
+                                            <small class="text-muted">Lubango</small>
                                         </td>
                                         <td>
-                                            <span class="badge 
-                                                {% if balanco.periodo_tipo == 'diario' %}bg-primary
-                                                {% elif balanco.periodo_tipo == 'semanal' %}bg-success
-                                                {% elif balanco.periodo_tipo == 'mensal' %}bg-info
-                                                {% else %}bg-warning{% endif %}">
-                                                {{ balanco.get_periodo_tipo_display }}
+                                            <span class="badge">
+                                                Mensal
                                             </span>
                                         </td>
-                                        <td>{{ balanco.descricao_periodo }}</td>
+                                        <td>Periodo</td>
                                         <td>
-                                            {% if balanco.primeiro_gerente %}
-                                                <span class="text-muted">Não definido</span>
-                                            {% else %}
-                                                <span class="text-muted">Não definido</span>
-                                            {% endif %}
+                                            <span class="text-muted">Ndombaxi Mantuidi de Almeida Bonga</span>
                                         </td>
                                         <td class="text-end">
-                                            <strong>Kz {{ balanco.total_geral_relatorios|default:0|floatformat:2 }}</strong>
+                                            <strong>Kz 50.000</strong>
                                         </td>
                                         <td class="text-end">
-                                            <strong>Kz {{ balanco.total_arrecadado|default:0|floatformat:2 }}</strong>
+                                            <strong>Kz 50.000</strong>
                                         </td>
                                         <td class="text-center">
-                                            {% if balanco.total_geral_relatorios > balanco.total_arrecadado %}
-                                                <span class="badge bg-danger">
-                                                    <i class="fas fa-exclamation-triangle me-1"></i>Negativo
-                                                    <br>
-                                                    <small>Falta: Kz {{ balanco.diferenca|default:0|floatformat:2 }}</small>
-                                                </span>
-                                            {% else %}
-                                                <span class="badge bg-success">
-                                                    <i class="fas fa-check-circle me-1"></i>Positivo
-                                                    {% if balanco.total_arrecadado > balanco.total_geral_relatorios %}
-                                                    <br>
-                                                    <small>Sobra: Kz {{ balanco.sobra|default:0|floatformat:2 }}</small>
-                                                    {% endif %}
-                                                </span>
-                                            {% endif %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>Positivo
+                                            </span>
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group btn-group-sm">
-                                                <a href="{% url 'detalhe_balanco' balanco.id %}" class="btn btn-outline-primary" title="Detalhes">
+                                                <a href="detalhe_balanco.html" class="btn btn-outline-primary" title="Detalhes">
                                                     <i class="fas fa-eye"></i>
                                                     <span class="d-none d-md-inline"> Ver</span>
                                                 </a>
@@ -1174,87 +1120,65 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- Paginação -->
-                        {% if balancos.paginator.num_pages > 1 %}
                         <nav aria-label="Navegação de páginas de balanços" class="mt-4">
                             <ul class="pagination justify-content-center pagination-responsive">
                                 <!-- Botão Anterior -->
-                                {% if balancos.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ balancos.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Anterior">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
-                                {% else %}
                                 <li class="page-item disabled">
                                     <span class="page-link" aria-hidden="true">&laquo;</span>
                                 </li>
-                                {% endif %}
 
                                 <!-- Primeira página -->
-                                {% if balancos.number > 3 %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">1</a>
                                 </li>
                                 <li class="page-item disabled">
                                     <span class="page-link">...</span>
                                 </li>
-                                {% endif %}
 
                                 <!-- Páginas ao redor da atual -->
-                                {% for num in balancos.paginator.page_range %}
-                                    {% if num >= balancos.number|add:"-2" and num <= balancos.number|add:"2" %}
-                                        {% if balancos.number == num %}
                                         <li class="page-item active">
                                             <span class="page-link">{{ num }}</span>
                                         </li>
-                                        {% else %}
                                         <li class="page-item">
                                             <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
                                         </li>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endfor %}
 
                                 <!-- Última página -->
-                                {% if balancos.number < balancos.paginator.num_pages|add:"-2" %}
                                 <li class="page-item disabled">
                                     <span class="page-link">...</span>
                                 </li>
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ balancos.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ balancos.paginator.num_pages }}</a>
                                 </li>
-                                {% endif %}
 
                                 <!-- Botão Próximo -->
-                                {% if balancos.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ balancos.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Próximo">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
-                                {% else %}
                                 <li class="page-item disabled">
                                     <span class="page-link" aria-hidden="true">&raquo;</span>
                                 </li>
-                                {% endif %}
                             </ul>
                             
                             <!-- Informação da página atual -->
                             <div class="text-center mt-2">
                                 <small class="text-muted">
-                                    Página {{ balancos.number }} de {{ balancos.paginator.num_pages }}
                                 </small>
                             </div>
                         </nav>
-                        {% endif %}
 
-                        {% else %}
                         <div class="empty-state">
                             <i class="fas fa-chart-bar"></i>
                             <h5>Nenhum balanço encontrado</h5>
@@ -1263,7 +1187,6 @@
                                 <i class="fas fa-plus me-1"></i>Criar Primeiro Balanço
                             </button>
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -1276,26 +1199,21 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="card-title mb-0">Lista de Balanços</h5>
-                            <small class="text-muted">{{ balancos.paginator.count }} totais</small>
+                            <small class="text-muted">1 totais</small>
                         </div>
                     </div>
                     <div class="card-body">
-                        {% if balancos %}
                         <div class="balance-list">
-                            {% for balanco in balancos %}
                             <div class="card balance-card">
                                 <div class="card-body">
                                     <div class="status-badge">
-                                        {% if balanco.total_geral_relatorios > balanco.total_arrecadado %}
-                                            <span class="badge bg-danger">Negativo</span>
-                                        {% else %}
-                                            <span class="badge bg-success">Positivo</span>
-                                        {% endif %}
+                                        <span class="badge bg-danger">Negativo</span>
+                                        <span class="badge bg-success">Positivo</span>
                                     </div>
                                     
                                     <div class="store-info">
-                                        <h6 class="mb-1">{{ balanco.loja.nome }}</h6>
-                                        <small class="text-muted">{{ balanco.loja.cidade }}</small>
+                                        <h6 class="mb-1">Loja_1</h6>
+                                        <small class="text-muted">Cidade: Lubango</small>
                                     </div>
                                     
                                     <div class="period-badge {{ balanco.periodo_tipo }}">
