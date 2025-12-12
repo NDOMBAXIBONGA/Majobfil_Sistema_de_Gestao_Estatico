@@ -313,16 +313,6 @@
         }
         
         /* Media Queries */
-        @media (max-width: 1400px) {
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            }
-            
-            .table {
-                min-width: 850px;
-            }
-        }
-        
         @media (max-width: 1200px) {
             :root {
                 --sidebar-width: 220px;
@@ -433,7 +423,6 @@
                 font-size: 0.9rem;
             }
             
-            /* Ajustes para modais em mobile */
             .modal-header,
             .modal-body,
             .modal-footer {
@@ -542,47 +531,6 @@
             }
         }
         
-        @media (max-width: 400px) {
-            .top-bar-actions {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-            
-            .top-bar-actions .btn,
-            .top-bar-actions .dropdown {
-                width: 100%;
-            }
-            
-            .top-bar-actions .dropdown-toggle {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .stats-grid .stats-card .row {
-                text-align: center;
-            }
-            
-            .filters-form .col-12 {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .table {
-                min-width: 600px;
-            }
-            
-            .table td:nth-child(4),
-            .table td:nth-child(7),
-            .table td:nth-child(8) {
-                min-width: 100px;
-            }
-            
-            .pagination-responsive .page-item:not(.active):not(:first-child):not(:last-child) {
-                display: none;
-            }
-        }
-        
         /* Vista Mobile para tabela (cards) */
         .mobile-balance-view {
             display: none;
@@ -602,6 +550,7 @@
                 border-radius: 10px;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 border-left: 4px solid var(--primary);
+                background: white;
             }
             
             .balance-card .status-badge {
@@ -651,12 +600,13 @@
                 border-radius: 4px;
                 font-size: 0.8rem;
                 margin-bottom: 8px;
+                color: white;
             }
             
-            .balance-card .period-badge.diario { background: var(--primary); color: white; }
-            .balance-card .period-badge.semanal { background: var(--success); color: white; }
-            .balance-card .period-badge.mensal { background: var(--info); color: white; }
-            .balance-card .period-badge.anual { background: var(--warning); color: white; }
+            .balance-card .period-badge.diario { background: var(--primary); }
+            .balance-card .period-badge.semanal { background: var(--success); }
+            .balance-card .period-badge.mensal { background: var(--info); }
+            .balance-card .period-badge.anual { background: var(--warning); }
             
             .balance-card .actions {
                 margin-top: 15px;
@@ -700,19 +650,6 @@
             background: var(--secondary);
         }
         
-        /* Acessibilidade */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-        
         /* Focus styles para acessibilidade */
         a:focus,
         button:focus,
@@ -721,71 +658,6 @@
         textarea:focus {
             outline: 2px solid var(--primary);
             outline-offset: 2px;
-        }
-        
-        /* Print styles */
-        @media print {
-            .sidebar,
-            .sidebar-toggle,
-            .top-bar-actions,
-            .btn,
-            .dropdown,
-            .modal,
-            .filters-form,
-            .pagination,
-            .mobile-balance-view,
-            .action-buttons {
-                display: none !important;
-            }
-            
-            .main-content {
-                margin-left: 0 !important;
-                padding: 0 !important;
-            }
-            
-            .stats-card {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-            }
-            
-            .table {
-                min-width: auto;
-                font-size: 10pt !important;
-            }
-            
-            .table th,
-            .table td {
-                padding: 4px !important;
-            }
-            
-            .top-bar {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-                margin-bottom: 15px !important;
-            }
-            
-            .desktop-table {
-                display: block !important;
-            }
-        }
-        
-        /* Melhorias para dropdowns em mobile */
-        @media (max-width: 576px) {
-            .dropdown-menu {
-                position: fixed !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                width: 90% !important;
-                max-height: 80vh !important;
-                overflow-y: auto !important;
-            }
-        }
-        
-        /* Loading state */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
         }
     </style>
 </head>
@@ -809,17 +681,17 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="../index.html">
+                    <a class="nav-link" href="#">
                         <i class="fas fa-home"></i><span>Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="lista_balancos.html">
+                    <a class="nav-link active" href="#">
                         <i class="fas fa-balance-scale"></i><span>Gerenciar Balanços</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="estoque/listar_movimentos_estoque.html">
+                    <a class="nav-link" href="#">
                         <i class="fas fa-box"></i><span>Gerenciar Estoque</span>
                     </a>
                 </li>
@@ -843,7 +715,7 @@
                     </div>
                     <span class="text-muted">
                         <i class="fas fa-user me-2"></i>
-                        <span class="d-none d-sm-inline">{{ user.nome|default:user.username }}</span>
+                        <span class="d-none d-sm-inline">Ndombaxi Mantuidi de Almrida Bonga</span>
                     </span>
                     <div class="dropdown">
                         <button class="btn btn-outline-primary dropdown-toggle" type="button" 
@@ -852,7 +724,7 @@
                             <i class="fas fa-cog"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
-                            <li><a class="dropdown-item" href="../conta/perfil.html"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="#">
                                 <i class="fas fa-sign-out-alt me-2"></i>Sair
@@ -872,22 +744,19 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" action="{% url 'criar_balanco_personalizado' %}" id="formCriarBalanco">
+                        <form method="post" action="#" id="formCriarBalanco">
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label class="form-label">Loja *</label>
                                     <select name="loja_id" class="form-select" required id="selectLoja">
                                         <option value="">Selecione a loja</option>
-                                            <option value="{{ loja.id }}">
-                                                Loja_1 - Cidade: Lubango
-                                                Loja_2 - Cidade: Luanda
-                                                Loja_3 - Cidade: Benguela
-                                            </option>
-                                            <option value="">Nenhuma loja cadastrada</option>
+                                        <option value="1">Loja_1 - Cidade: Lubango</option>
+                                        <option value="2">Loja_2 - Cidade: Luanda</option>
+                                        <option value="3">Loja_3 - Cidade: Benguela</option>
                                     </select>
                                     <div class="form-text">
-                                            <i class="fas fa-shield-alt text-primary"></i> Superusuário: Todas as lojas disponíveis
-                                            <i class="fas fa-user-check text-info"></i> Você pode criar balanços apenas para lojas que gerenciam
+                                        <i class="fas fa-shield-alt text-primary"></i> Superusuário: Todas as lojas disponíveis
+                                        <i class="fas fa-user-check text-info"></i> Você pode criar balanços apenas para lojas que gerenciam
                                     </div>
                                 </div>
                                 
@@ -959,29 +828,46 @@
                                     <label class="form-label">Período</label>
                                     <select name="periodo_tipo" class="form-select">
                                         <option value="">Todos</option>
-                                        <option value="{{ value }}" {% if periodo_tipo_selecionado == value %}selected{% endif %}>{{ label }}</option>
+                                        <option value="diario">Diário</option>
+                                        <option value="semanal" selected>Semanal</option>
+                                        <option value="mensal">Mensal</option>
+                                        <option value="anual">Anual</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="form-label">Loja</label>
                                     <select name="loja" class="form-select">
                                         <option value="">Todas</option>
-                                        <option value="{{ loja.id }}" {% if loja_selecionada == loja.id|stringformat:"i" %}selected{% endif %}>{{ loja.nome }}</option>
+                                        <option value="1">Loja_1 - Lubango</option>
+                                        <option value="2">Loja_2 - Luanda</option>
+                                        <option value="3">Loja_3 - Benguela</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="form-label">Ano</label>
                                     <select name="ano" class="form-select">
                                         <option value="todos">Todos os anos</option>
-                                        <option value="{{ ano }}" {% if ano_selecionado == ano|stringformat:"i" %}selected{% endif %}>{{ ano }}</option>
+                                        <option value="2024" selected>2024</option>
+                                        <option value="2023">2023</option>
+                                        <option value="2022">2022</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="form-label">Mês</label>
                                     <select name="mes" class="form-select">
                                         <option value="">Todos os meses</option>
-                                        <option value="{{ i }}" {% if mes_selecionado == i %}selected{% endif %}>
-                                        </option>
+                                        <option value="1">Janeiro</option>
+                                        <option value="2">Fevereiro</option>
+                                        <option value="3">Março</option>
+                                        <option value="4" selected>Abril</option>
+                                        <option value="5">Maio</option>
+                                        <option value="6">Junho</option>
+                                        <option value="7">Julho</option>
+                                        <option value="8">Agosto</option>
+                                        <option value="9">Setembro</option>
+                                        <option value="10">Outubro</option>
+                                        <option value="11">Novembro</option>
+                                        <option value="12">Dezembro</option>
                                     </select>
                                 </div>
                                 <div class="col-12">
@@ -989,7 +875,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-filter me-1"></i>Filtrar
                                         </button>
-                                        <a href="lista_balancos.html" class="btn btn-outline-secondary">
+                                        <a href="#" class="btn btn-outline-secondary">
                                             <i class="fas fa-times me-1"></i>Limpar
                                         </a>
                                     </div>
@@ -1008,8 +894,8 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Vendas</h5>
-                            <h2 class="mb-0">Kz 100.000</h2>
-                            <small>balanços</small>
+                            <h2 class="mb-0">Kz 850.450</h2>
+                            <small>6 balanços</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
                             <i class="fas fa-shopping-cart fa-3x opacity-50"></i>
@@ -1023,7 +909,7 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Geral</h5>
-                            <h2 class="mb-0">Kz 50.000</h2>
+                            <h2 class="mb-0">Kz 650.230</h2>
                             <small>Soma dos totais gerais</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
@@ -1038,7 +924,7 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Arrecadado</h5>
-                            <h2 class="mb-0">Kz 50.000</h2>
+                            <h2 class="mb-0">Kz 520.180</h2>
                             <small>Soma dos totais arrecadados</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
@@ -1057,11 +943,11 @@
                         <div>
                             <h5 class="card-title mb-0">Lista de Balanços</h5>
                             <small class="text-muted">
-                                Mostrando
+                                Mostrando 4 de 6 balanços
                             </small>
                         </div>
                         <div>
-                            <span class="badge bg-primary">totais</span>
+                            <span class="badge bg-primary">6 totais</span>
                             <span class="badge bg-secondary ms-1">4 por página</span>
                         </div>
                     </div>
@@ -1088,19 +974,19 @@
                                             <small class="text-muted">Lubango</small>
                                         </td>
                                         <td>
-                                            <span class="badge">
+                                            <span class="badge bg-info">
                                                 Mensal
                                             </span>
                                         </td>
-                                        <td>Periodo</td>
+                                        <td>01/04/2024 - 30/04/2024</td>
                                         <td>
                                             <span class="text-muted">Ndombaxi Mantuidi de Almeida Bonga</span>
                                         </td>
                                         <td class="text-end">
-                                            <strong>Kz 50.000</strong>
+                                            <strong>Kz 85.000</strong>
                                         </td>
                                         <td class="text-end">
-                                            <strong>Kz 50.000</strong>
+                                            <strong>Kz 82.500</strong>
                                         </td>
                                         <td class="text-center">
                                             <span class="badge bg-success">
@@ -1109,11 +995,128 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group btn-group-sm">
-                                                <a href="detalhe_balanco.html" class="btn btn-outline-primary" title="Detalhes">
+                                                <a href="#" class="btn btn-outline-primary" title="Detalhes">
                                                     <i class="fas fa-eye"></i>
                                                     <span class="d-none d-md-inline"> Ver</span>
                                                 </a>
-                                                <a href="{% url 'excluir_balanco' balanco.id %}" class="btn btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
+                                                <a href="#" class="btn btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
+                                                    <i class="fas fa-trash"></i>
+                                                    <span class="d-none d-md-inline"> Excluir</span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Loja_2</strong>
+                                            <br>
+                                            <small class="text-muted">Luanda</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning">
+                                                Semanal
+                                            </span>
+                                        </td>
+                                        <td>22/04/2024 - 28/04/2024</td>
+                                        <td>
+                                            <span class="text-muted">Carlos Silva</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>Kz 45.000</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>Kz 42.000</strong>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-exclamation-circle me-1"></i>Negativo
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="#" class="btn btn-outline-primary" title="Detalhes">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span class="d-none d-md-inline"> Ver</span>
+                                                </a>
+                                                <a href="#" class="btn btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
+                                                    <i class="fas fa-trash"></i>
+                                                    <span class="d-none d-md-inline"> Excluir</span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Loja_1</strong>
+                                            <br>
+                                            <small class="text-muted">Lubango</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">
+                                                Diário
+                                            </span>
+                                        </td>
+                                        <td>28/04/2024 - 28/04/2024</td>
+                                        <td>
+                                            <span class="text-muted">Ndombaxi Mantuidi de Almeida Bonga</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>Kz 3.200</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>Kz 3.200</strong>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>Positivo
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="#" class="btn btn-outline-primary" title="Detalhes">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span class="d-none d-md-inline"> Ver</span>
+                                                </a>
+                                                <a href="#" class="btn btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
+                                                    <i class="fas fa-trash"></i>
+                                                    <span class="d-none d-md-inline"> Excluir</span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Loja_3</strong>
+                                            <br>
+                                            <small class="text-muted">Benguela</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                Anual
+                                            </span>
+                                        </td>
+                                        <td>01/01/2024 - 31/12/2024</td>
+                                        <td>
+                                            <span class="text-muted">Maria Santos</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>Kz 520.000</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>Kz 392.480</strong>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-exclamation-circle me-1"></i>Negativo
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="#" class="btn btn-outline-primary" title="Detalhes">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span class="d-none d-md-inline"> Ver</span>
+                                                </a>
+                                                <a href="#" class="btn btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
                                                     <i class="fas fa-trash"></i>
                                                     <span class="d-none d-md-inline"> Excluir</span>
                                                 </a>
@@ -1128,65 +1131,33 @@
                         <nav aria-label="Navegação de páginas de balanços" class="mt-4">
                             <ul class="pagination justify-content-center pagination-responsive">
                                 <!-- Botão Anterior -->
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ balancos.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Anterior">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
                                 <li class="page-item disabled">
                                     <span class="page-link" aria-hidden="true">&laquo;</span>
                                 </li>
 
                                 <!-- Primeira página -->
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">1</a>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link">...</span>
-                                </li>
-
-                                <!-- Páginas ao redor da atual -->
-                                        <li class="page-item active">
-                                            <span class="page-link">{{ num }}</span>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
-                                        </li>
-
-                                <!-- Última página -->
-                                <li class="page-item disabled">
-                                    <span class="page-link">...</span>
+                                <li class="page-item active">
+                                    <span class="page-link">1</span>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page={{ balancos.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ balancos.paginator.num_pages }}</a>
+                                    <a class="page-link" href="#">2</a>
                                 </li>
 
                                 <!-- Botão Próximo -->
                                 <li class="page-item">
-                                    <a class="page-link" href="?page={{ balancos.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Próximo">
+                                    <a class="page-link" href="#" aria-label="Próximo">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link" aria-hidden="true">&raquo;</span>
                                 </li>
                             </ul>
                             
                             <!-- Informação da página atual -->
                             <div class="text-center mt-2">
                                 <small class="text-muted">
+                                    Página 1 de 2 | 6 balanços no total
                                 </small>
                             </div>
                         </nav>
-
-                        <div class="empty-state">
-                            <i class="fas fa-chart-bar"></i>
-                            <h5>Nenhum balanço encontrado</h5>
-                            <p class="text-muted">Crie seu primeiro balanço para começar a análise.</p>
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#criarBalancoModal">
-                                <i class="fas fa-plus me-1"></i>Criar Primeiro Balanço
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1199,15 +1170,15 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="card-title mb-0">Lista de Balanços</h5>
-                            <small class="text-muted">1 totais</small>
+                            <small class="text-muted">4 totais</small>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="balance-list">
+                            <!-- Card 1 -->
                             <div class="card balance-card">
                                 <div class="card-body">
                                     <div class="status-badge">
-                                        <span class="badge bg-danger">Negativo</span>
                                         <span class="badge bg-success">Positivo</span>
                                     </div>
                                     
@@ -1216,90 +1187,119 @@
                                         <small class="text-muted">Cidade: Lubango</small>
                                     </div>
                                     
-                                    <div class="period-badge {{ balanco.periodo_tipo }}">
-                                        {{ balanco.get_periodo_tipo_display }}
+                                    <div class="period-badge mensal">
+                                        Mensal
                                     </div>
                                     
                                     <div class="info-section">
                                         <div class="info-row">
                                             <span class="info-label">Período:</span>
-                                            <span class="info-value">{{ balanco.descricao_periodo }}</span>
+                                            <span class="info-value">01/04/2024 - 30/04/2024</span>
                                         </div>
                                         
                                         <div class="info-row">
                                             <span class="info-label">Total Geral:</span>
-                                            <span class="info-value">Kz {{ balanco.total_geral_relatorios|default:0|floatformat:2 }}</span>
+                                            <span class="info-value">Kz 85.000</span>
                                         </div>
                                         
                                         <div class="info-row">
                                             <span class="info-label">Total Arrecadado:</span>
-                                            <span class="info-value">Kz {{ balanco.total_arrecadado|default:0|floatformat:2 }}</span>
+                                            <span class="info-value">Kz 82.500</span>
                                         </div>
                                         
                                         <div class="info-row">
                                             <span class="info-label">Situação:</span>
-                                            <span class="info-value">
-                                                {% if balanco.total_geral_relatorios > balanco.total_arrecadado %}
-                                                    Falta: Kz {{ balanco.diferenca|default:0|floatformat:2 }}
-                                                {% else %}
-                                                    Sobra: Kz {{ balanco.sobra|default:0|floatformat:2 }}
-                                                {% endif %}
+                                            <span class="info-value valor-positivo">
+                                                Sobra: Kz 2.500
                                             </span>
                                         </div>
                                     </div>
                                     
                                     <div class="actions">
-                                        <a href="{% url 'detalhe_balanco' balanco.id %}" class="btn btn-outline-primary btn-sm">
+                                        <a href="#" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-eye me-1"></i>Ver
                                         </a>
-                                        <a href="{% url 'excluir_balanco' balanco.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
+                                        <a href="#" class="btn btn-outline-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
                                             <i class="fas fa-trash me-1"></i>Excluir
                                         </a>
                                     </div>
                                 </div>
                             </div>
-                            {% endfor %}
+                            
+                            <!-- Card 2 -->
+                            <div class="card balance-card">
+                                <div class="card-body">
+                                    <div class="status-badge">
+                                        <span class="badge bg-danger">Negativo</span>
+                                    </div>
+                                    
+                                    <div class="store-info">
+                                        <h6 class="mb-1">Loja_2</h6>
+                                        <small class="text-muted">Cidade: Luanda</small>
+                                    </div>
+                                    
+                                    <div class="period-badge semanal">
+                                        Semanal
+                                    </div>
+                                    
+                                    <div class="info-section">
+                                        <div class="info-row">
+                                            <span class="info-label">Período:</span>
+                                            <span class="info-value">22/04/2024 - 28/04/2024</span>
+                                        </div>
+                                        
+                                        <div class="info-row">
+                                            <span class="info-label">Total Geral:</span>
+                                            <span class="info-value">Kz 45.000</span>
+                                        </div>
+                                        
+                                        <div class="info-row">
+                                            <span class="info-label">Total Arrecadado:</span>
+                                            <span class="info-value">Kz 42.000</span>
+                                        </div>
+                                        
+                                        <div class="info-row">
+                                            <span class="info-label">Situação:</span>
+                                            <span class="info-value valor-negativo">
+                                                Falta: Kz 3.000
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="actions">
+                                        <a href="#" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>Ver
+                                        </a>
+                                        <a href="#" class="btn btn-outline-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este balanço?')">
+                                            <i class="fas fa-trash me-1"></i>Excluir
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Paginação Mobile -->
-                        {% if balancos.paginator.num_pages > 1 %}
                         <nav aria-label="Navegação de páginas" class="mt-4">
                             <ul class="pagination justify-content-center pagination-responsive">
-                                {% if balancos.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ balancos.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
-                                {% endif %}
                                 
                                 <li class="page-item active">
                                     <span class="page-link">
-                                        Pág. {{ balancos.number }} de {{ balancos.paginator.num_pages }}
+                                        Pág. 1 de 2
                                     </span>
                                 </li>
                                 
-                                {% if balancos.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?page={{ balancos.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    <a class="page-link" href="#">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
-                                {% endif %}
                             </ul>
                         </nav>
-                        {% endif %}
-                        
-                        {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-chart-bar"></i>
-                            <h5>Nenhum balanço encontrado</h5>
-                            <p class="text-muted">Crie seu primeiro balanço para começar a análise.</p>
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#criarBalancoModal">
-                                <i class="fas fa-plus me-1"></i>Criar Primeiro Balanço
-                            </button>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -1449,11 +1449,12 @@
             const form = document.querySelector('#criarBalancoModal form');
             if (form) {
                 form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevenir envio real para demonstração
+                    
                     const dataInicio = new Date(document.getElementById('dataInicioModal').value);
                     const dataFim = new Date(document.getElementById('dataFimModal').value);
                     
                     if (dataInicio > dataFim) {
-                        e.preventDefault();
                         alert('A data de início não pode ser posterior à data de fim.');
                         return false;
                     }
@@ -1461,7 +1462,6 @@
                     // Verificar se há loja selecionada
                     const lojaSelect = document.querySelector('select[name="loja_id"]');
                     if (lojaSelect && !lojaSelect.value) {
-                        e.preventDefault();
                         alert('Selecione uma loja.');
                         return false;
                     }
@@ -1473,7 +1473,18 @@
                         btnCriar.disabled = true;
                     }
                     
-                    return true;
+                    // Simular criação (para demonstração)
+                    setTimeout(() => {
+                        alert('Balanço criado com sucesso! (demonstração)');
+                        btnCriar.innerHTML = '<i class="fas fa-plus me-1"></i>Criar Balanço';
+                        btnCriar.disabled = false;
+                        
+                        // Fechar modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('criarBalancoModal'));
+                        if (modal) modal.hide();
+                    }, 1500);
+                    
+                    return false;
                 });
             }
             
@@ -1494,126 +1505,30 @@
             }
         });
         
-        // Melhorias para dropdowns em mobile
-        function adjustDropdownsForMobile() {
-            if (isMobile) {
-                document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                    menu.style.position = 'fixed';
-                    menu.style.top = '50%';
-                    menu.style.left = '50%';
-                    menu.style.transform = 'translate(-50%, -50%)';
-                    menu.style.width = '90%';
-                    menu.style.maxHeight = '80vh';
-                    menu.style.overflowY = 'auto';
-                });
-            } else {
-                document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                    menu.style.position = '';
-                    menu.style.top = '';
-                    menu.style.left = '';
-                    menu.style.transform = '';
-                    menu.style.width = '';
-                    menu.style.maxHeight = '';
-                    menu.style.overflowY = '';
-                });
-            }
-        }
-        
-        // Ajustar dropdowns quando a tela é redimensionada
-        window.addEventListener('resize', adjustDropdownsForMobile);
-        
-        // Ajustar dropdowns no carregamento
-        document.addEventListener('DOMContentLoaded', adjustDropdownsForMobile);
-        
-        // Função para melhorar a experiência em dispositivos touch
-        function improveTouchExperience() {
-            // Aumentar área de toque para botões em mobile
-            if (isMobile) {
-                document.querySelectorAll('.btn').forEach(btn => {
-                    btn.style.minHeight = '44px';
-                    btn.style.minWidth = '44px';
-                    btn.style.display = 'inline-flex';
-                    btn.style.alignItems = 'center';
-                    btn.style.justifyContent = 'center';
-                });
-                
-                // Aumentar área de toque para inputs e selects
-                document.querySelectorAll('input, select, textarea').forEach(input => {
-                    input.style.minHeight = '44px';
-                });
-            }
-        }
-        
-        // Melhorar experiência touch
-        document.addEventListener('DOMContentLoaded', improveTouchExperience);
-        window.addEventListener('resize', improveTouchExperience);
-        
-        // Suporte para teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeSidebar();
-                const modals = document.querySelectorAll('.modal.show');
-                modals.forEach(modal => {
-                    const bsModal = bootstrap.Modal.getInstance(modal);
-                    if (bsModal) bsModal.hide();
-                });
-            }
-        });
-        
-        // Prevenir zoom em inputs em mobile
-        document.addEventListener('touchstart', (e) => {
-            if (e.target.tagName === 'INPUT' && e.target.type !== 'textarea') {
-                e.target.style.fontSize = '16px';
-            }
-        }, { passive: true });
-        
-        // Otimização de performance
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                // Redesenhar componentes se necessário
-            }, 250);
-        });
-        
-        // Suporte para impressão
-        window.addEventListener('beforeprint', () => {
-            // Mostrar apenas a tabela desktop
-            document.querySelector('.mobile-balance-view').style.display = 'none';
-            document.querySelector('.desktop-table').style.display = 'block';
-        });
-        
-        window.addEventListener('afterprint', () => {
-            // Restaurar visibilidade original
-            if (window.innerWidth <= 576) {
-                document.querySelector('.mobile-balance-view').style.display = 'block';
-                document.querySelector('.desktop-table').style.display = 'none';
-            }
-        });
-        
-        // Animações suaves para melhor UX
-        document.addEventListener('DOMContentLoaded', () => {
-            // Adicionar efeito de carregamento suave
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-                document.body.style.transition = 'opacity 0.3s ease-in';
-            }, 100);
-        });
-        
         // Função para confirmar exclusões
         function confirmDelete(event) {
             if (!confirm('Tem certeza que deseja excluir este balanço?')) {
                 event.preventDefault();
                 return false;
             }
-            return true;
+            
+            // Simular exclusão (para demonstração)
+            alert('Balanço excluído com sucesso! (demonstração)');
+            event.preventDefault();
+            return false;
         }
         
         // Adicionar confirm a todos os links de exclusão
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('a[href*="excluir_balanco"]').forEach(link => {
+            document.querySelectorAll('a[onclick*="confirm"]').forEach(link => {
                 link.addEventListener('click', confirmDelete);
             });
+        });
+        
+        // Simular filtros
+        document.querySelector('.filters-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Filtros aplicados! (demonstração)');
         });
     </script>
 </body>
