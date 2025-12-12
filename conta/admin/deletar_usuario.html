@@ -255,6 +255,13 @@
             text-decoration: none;
         }
         
+        /* Confirmation Input */
+        .confirmation-input {
+            max-width: 300px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        
         /* Media Queries */
         @media (max-width: 1200px) {
             :root {
@@ -487,22 +494,20 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
+                    <a class="nav-link" href="../../index.html">
                         <i class="fas fa-home"></i>Dashboard
                     </a>
                 </li>
-                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'criar_usuario' %}">
+                    <a class="nav-link" href="../admin/criar_usuario.html">
                         <i class="fas fa-user-plus"></i>Criar Conta
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'listar_usuarios' %}">
+                    <a class="nav-link active" href="../admin/listar_usuarios.html">
                         <i class="fas fa-users"></i>Gerenciar Usuários
                     </a>
                 </li>
-                {% endif %}
             </ul>
         </div>
     </div>
@@ -516,38 +521,34 @@
                     <h3 class="mb-0">Deletar Usuário</h3>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'listar_usuarios' %}">Usuários</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'detalhes_usuario' usuario.id %}">{{ usuario.nome|truncatechars:20 }}</a></li>
+                            <li class="breadcrumb-item"><a href="../../index.html">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="../admin/detalhes_usuario.html">Usuários</a></li>
+                            <li class="breadcrumb-item"><a href="../admin/detalhes_usuario.html" id="userDetailLink">Ndombaxi Mantuidi de Almeida Bonga</a></li>
                             <li class="breadcrumb-item active">Deletar</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="top-bar-actions">
-                    <a href="{% url 'detalhes_usuario' usuario.id %}" class="btn btn-outline-primary">
+                    <a href="../admin/listar_usuarios.html" id="backButton" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i>Voltar
                     </a>
                     <span class="text-muted">
                         <i class="fas fa-user me-2"></i>
-                        {{ user.nome|default:user.username }}
+                        Administrador
                     </span>
                 </div>
             </div>
         </div>
 
-        <!-- Mensagens -->
-        {% if messages %}
-        <div class="row mb-4">
+        <!-- Container para mensagens -->
+        <div id="messagesContainer" class="row mb-4" style="display: none;">
             <div class="col-12">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                <div id="alertMessage" class="alert alert-dismissible fade show">
+                    <span id="alertText"></span>
+                    <button type="button" class="btn-close" onclick="closeAlert()"></button>
                 </div>
-                {% endfor %}
             </div>
         </div>
-        {% endif %}
 
         <!-- Confirmation Card -->
         <div class="row justify-content-center">
@@ -572,21 +573,13 @@
                         <h3 class="text-danger mb-3">Tem certeza que deseja deletar este usuário?</h3>
                         
                         <div class="mb-4">
-                            <img src="https://ui-avatars.com/api/?name={{ usuario.nome|urlencode }}&background=dc2626&color=fff&size=100" 
+                            <img src="https://ui-avatars.com/api/?name=Maria+Silva&background=dc2626&color=fff&size=100" 
                                  alt="Avatar" class="user-avatar mb-3">
-                            <h4 class="mb-1">{{ usuario.nome }}</h4>
-                            <p class="text-muted">{{ usuario.email }}</p>
-                            <div class="mb-3">
-                                {% if usuario.is_superuser %}
-                                <span class="badge bg-danger me-1">Administrador</span>
-                                {% elif usuario.is_staff %}
-                                <span class="badge bg-warning me-1">Staff</span>
-                                {% else %}
+                            <h4 class="mb-1" id="userName">Ndombaxi Mantuidi de Almeida Bonga</h4>
+                            <p class="text-muted" id="userEmail">jobdealmeida016@gmail.com</p>
+                            <div class="mb-3" id="userBadges">
                                 <span class="badge bg-secondary me-1">Usuário</span>
-                                {% endif %}
-                                <span class="badge bg-{% if usuario.is_active %}success{% else %}danger{% endif %}">
-                                    {% if usuario.is_active %}Ativo{% else %}Inativo{% endif %}
-                                </span>
+                                <span class="badge bg-success">Ativo</span>
                             </div>
                         </div>
 
@@ -594,19 +587,32 @@
                         <div class="details-grid mb-4">
                             <div class="detail-item">
                                 <div class="detail-label">Data de Registro</div>
-                                <div class="detail-value">{{ usuario.date_joined|date:"d/m/Y" }}</div>
+                                <div class="detail-value" id="userJoinDate">15/03/2023</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Último Login</div>
-                                <div class="detail-value">{{ usuario.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</div>
+                                <div class="detail-value" id="userLastLogin">Hoje, 09:15</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Total de Vendas</div>
-                                <div class="detail-value">{{ usuario.total_vendas_usuario|default:"0" }}</div>
+                                <div class="detail-value" id="userTotalSales">45</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Vendas (30 dias)</div>
-                                <div class="detail-value">{{ usuario.vendas_ultimos_30_dias|default:"0" }}</div>
+                                <div class="detail-value" id="userRecentSales">12</div>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation Input (Opcional) -->
+                        <div class="confirmation-input" id="confirmationSection" style="display: none;">
+                            <label for="confirmText" class="form-label text-danger">
+                                <i class="fas fa-keyboard me-1"></i>
+                                Digite <strong>DELETAR</strong> para confirmar:
+                            </label>
+                            <input type="text" class="form-control text-center" id="confirmText" 
+                                   placeholder="Digite DELETAR aqui" autocomplete="off">
+                            <div class="invalid-feedback" id="confirmError">
+                                Por favor, digite "DELETAR" para confirmar.
                             </div>
                         </div>
 
@@ -617,30 +623,30 @@
                                 <li>Esta ação <strong>não pode ser desfeita</strong></li>
                                 <li>Todos os dados do usuário serão permanentemente excluídos</li>
                                 <li>O histórico de vendas associado a este usuário será mantido, mas sem referência ao usuário</li>
-                                {% if usuario.is_superuser %}
-                                <li class="text-danger"><strong>Este é um usuário administrador - tenha cuidado!</strong></li>
-                                {% endif %}
+                                <li id="adminWarning" style="display: none;" class="text-danger">
+                                    <strong>Este é um usuário administrador - tenha cuidado!</strong>
+                                </li>
                             </ul>
                         </div>
 
-                        <!-- Confirmation Form -->
-                        <form method="post" class="mt-4">
-                            {% csrf_token %}
+                        <!-- Confirmation Buttons -->
+                        <div class="mt-4">
                             <div class="d-flex justify-content-center flex-wrap gap-3">
-                                <a href="{% url 'detalhes_usuario' usuario.id %}" class="btn btn-secondary btn-lg">
+                                <a href="../admin/listar_usuarios.html" id="cancelButton" class="btn btn-secondary btn-lg">
                                     <i class="fas fa-arrow-left me-2"></i>Cancelar
                                 </a>
-                                <button type="submit" class="btn btn-danger btn-lg">
+                                <button type="button" id="deleteButton" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#confirmModal">
                                     <i class="fas fa-trash me-2"></i>Sim, Deletar Usuário
                                 </button>
                             </div>
-                        </form>
+                        </div>
 
                         <!-- Additional Warning -->
                         <div class="mt-4 text-muted">
                             <small>
                                 <i class="fas fa-info-circle me-1"></i>
-                                Para confirmar, digite "DELETAR" no campo abaixo antes de clicar no botão (implementação opcional)
+                                Recomendamos habilitar a confirmação por texto para operações críticas
+                                <a href="#" onclick="toggleConfirmation()" class="ms-1">(Habilitar)</a>
                             </small>
                         </div>
                     </div>
@@ -649,8 +655,67 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmação Final -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-radiation me-2"></i>Confirmação Final
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-skull-crossbones fa-4x text-danger mb-3"></i>
+                        <h4 class="text-danger">CONFIRMAÇÃO FINAL</h4>
+                    </div>
+                    <p class="mb-1">Você está prestes a deletar permanentemente:</p>
+                    <h5 class="mb-3" id="modalUserName">Maria Silva</h5>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Esta ação não pode ser desfeita!</strong>
+                    </div>
+                    <p class="text-muted">Digite sua senha para confirmar:</p>
+                    <input type="password" class="form-control mb-3" id="adminPassword" 
+                           placeholder="Sua senha de administrador">
+                    <div class="invalid-feedback" id="passwordError">
+                        Senha incorreta.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                        <i class="fas fa-check me-2"></i>Confirmar Exclusão
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Dados do usuário para simulação
+        const userData = {
+            id: 1,
+            nome: "Maria Silva",
+            email: "maria.silva@empresa.com",
+            is_superuser: false,
+            is_staff: false,
+            is_active: true,
+            date_joined: "15/03/2023",
+            last_login: "Hoje, 09:15",
+            total_vendas_usuario: 45,
+            vendas_ultimos_30_dias: 12
+        };
+
+        // Configuração da página
+        const requireTextConfirmation = false; // Alterar para true para exigir digitar "DELETAR"
+        const requirePasswordConfirmation = true; // Confirmar com senha de administrador
+        const adminPassword = "admin123"; // Senha simulada (em produção, usar autenticação real)
+
         // Gerenciamento da sidebar responsiva
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -735,6 +800,9 @@
                     isSidebarCollapsed = true;
                 }
             }
+            
+            // Inicializar dados do usuário
+            initializeUserData();
         });
         
         // Suporte para teclado nos dropdowns
@@ -748,14 +816,206 @@
                 });
             }
         });
-        
-        // Confirmação adicional para deletar
-        document.querySelector('form').addEventListener('submit', (e) => {
-            const confirmDelete = confirm('Tem CERTEZA ABSOLUTA que deseja deletar este usuário? Esta ação NÃO pode ser desfeita!');
-            if (!confirmDelete) {
-                e.preventDefault();
+
+        // Função para inicializar dados do usuário
+        function initializeUserData() {
+            document.getElementById('userName').textContent = userData.nome;
+            document.getElementById('userEmail').textContent = userData.email;
+            document.getElementById('modalUserName').textContent = userData.nome;
+            document.getElementById('userJoinDate').textContent = userData.date_joined;
+            document.getElementById('userLastLogin').textContent = userData.last_login;
+            document.getElementById('userTotalSales').textContent = userData.total_vendas_usuario;
+            document.getElementById('userRecentSales').textContent = userData.vendas_ultimos_30_dias;
+            
+            // Atualizar badges
+            const badgesContainer = document.getElementById('userBadges');
+            badgesContainer.innerHTML = '';
+            
+            if (userData.is_superuser) {
+                badgesContainer.innerHTML += '<span class="badge bg-danger me-1">Administrador</span>';
+                document.getElementById('adminWarning').style.display = 'list-item';
+            } else if (userData.is_staff) {
+                badgesContainer.innerHTML += '<span class="badge bg-warning me-1">Staff</span>';
+            } else {
+                badgesContainer.innerHTML += '<span class="badge bg-secondary me-1">Usuário</span>';
+            }
+            
+            badgesContainer.innerHTML += `<span class="badge bg-${userData.is_active ? 'success' : 'danger'}">
+                ${userData.is_active ? 'Ativo' : 'Inativo'}
+            </span>`;
+        }
+
+        // Função para mostrar alerta
+        function showAlert(message, type) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const alertMessage = document.getElementById('alertMessage');
+            const alertText = document.getElementById('alertText');
+            
+            // Configurar alerta
+            alertMessage.className = `alert alert-${type} alert-dismissible fade show`;
+            alertText.textContent = message;
+            
+            // Mostrar container
+            messagesContainer.style.display = 'block';
+            
+            // Rolagem suave para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (messagesContainer.style.display !== 'none') {
+                    closeAlert();
+                }
+            }, 5000);
+        }
+
+        // Função para fechar alerta
+        function closeAlert() {
+            document.getElementById('messagesContainer').style.display = 'none';
+        }
+
+        // Função para alternar confirmação por texto
+        function toggleConfirmation() {
+            const confirmationSection = document.getElementById('confirmationSection');
+            const isVisible = confirmationSection.style.display === 'block';
+            confirmationSection.style.display = isVisible ? 'none' : 'block';
+            
+            // Atualizar link
+            const link = document.querySelector('a[onclick="toggleConfirmation()"]');
+            link.textContent = isVisible ? '(Habilitar)' : '(Desabilitar)';
+            
+            // Limpar campo se estiver desabilitando
+            if (isVisible) {
+                document.getElementById('confirmText').value = '';
+                document.getElementById('confirmText').classList.remove('is-invalid');
+            }
+            
+            return false;
+        }
+
+        // Função para verificar confirmação por texto
+        function checkTextConfirmation() {
+            if (document.getElementById('confirmationSection').style.display === 'none') {
+                return true; // Confirmação não está habilitada
+            }
+            
+            const confirmText = document.getElementById('confirmText').value.toUpperCase();
+            const confirmError = document.getElementById('confirmError');
+            
+            if (confirmText === 'DELETAR') {
+                document.getElementById('confirmText').classList.remove('is-invalid');
+                return true;
+            } else {
+                document.getElementById('confirmText').classList.add('is-invalid');
+                confirmError.textContent = confirmText ? 
+                    'Texto incorreto. Digite exatamente "DELETAR".' : 
+                    'Por favor, digite "DELETAR" para confirmar.';
+                return false;
+            }
+        }
+
+        // Função para confirmar exclusão
+        function confirmDelete() {
+            const password = document.getElementById('adminPassword').value;
+            const passwordError = document.getElementById('passwordError');
+            
+            if (requirePasswordConfirmation && password !== adminPassword) {
+                document.getElementById('adminPassword').classList.add('is-invalid');
+                passwordError.textContent = password ? 
+                    'Senha incorreta. Tente novamente.' : 
+                    'Por favor, digite sua senha de administrador.';
+                return;
+            }
+            
+            // Fechar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+            modal.hide();
+            
+            // Simular exclusão
+            simulateDeletion();
+        }
+
+        // Função para simular exclusão
+        function simulateDeletion() {
+            const deleteButton = document.getElementById('deleteButton');
+            const originalText = deleteButton.innerHTML;
+            
+            // Mostrar loading
+            deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Deletando...';
+            deleteButton.disabled = true;
+            
+            // Simular requisição ao servidor
+            setTimeout(() => {
+                // Mostrar mensagem de sucesso
+                showAlert(`Usuário "${userData.nome}" deletado com sucesso!`, 'success');
+                
+                // Redirecionar após 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'lista-usuarios.html';
+                }, 2000);
+                
+            }, 1500);
+        }
+
+        // Event listeners para botões
+        document.getElementById('deleteButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Verificar confirmação por texto se habilitada
+            if (!checkTextConfirmation()) {
+                showAlert('Por favor, digite "DELETAR" para confirmar a exclusão.', 'warning');
+                return;
+            }
+            
+            // Se não exigir senha, mostrar confirmação direta
+            if (!requirePasswordConfirmation) {
+                if (confirm('Tem CERTEZA ABSOLUTA que deseja deletar este usuário? Esta ação NÃO pode ser desfeita!')) {
+                    simulateDeletion();
+                }
+            }
+            // Se exigir senha, o modal já será aberto pelo data-bs-toggle
+        });
+
+        // Configurar botões de navegação
+        document.getElementById('backButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Tem certeza que deseja sair sem deletar o usuário?')) {
+                window.location.href = 'detalhes-usuario.html';
             }
         });
+
+        document.getElementById('cancelButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Tem certeza que deseja cancelar a exclusão?')) {
+                window.location.href = 'detalhes-usuario.html';
+            }
+        });
+
+        document.getElementById('userDetailLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Ir para os detalhes do usuário? As alterações serão perdidas.')) {
+                window.location.href = 'detalhes-usuario.html';
+            }
+        });
+
+        // Event listener para tecla Enter no campo de confirmação
+        document.getElementById('confirmText').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('deleteButton').click();
+            }
+        });
+
+        // Event listener para tecla Enter no campo de senha
+        document.getElementById('adminPassword').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                confirmDelete();
+            }
+        });
+
+        // Se a confirmação por texto estiver habilitada por padrão
+        if (requireTextConfirmation) {
+            toggleConfirmation();
+        }
     </script>
 </body>
 </html>

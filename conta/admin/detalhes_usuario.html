@@ -552,22 +552,20 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
+                    <a class="nav-link" href="../../index.html">
                         <i class="fas fa-home"></i>Dashboard
                     </a>
                 </li>
-                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'criar_usuario' %}">
+                    <a class="nav-link" href="../admin/criar_usuario.html">
                         <i class="fas fa-user-plus"></i>Criar Conta
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'listar_usuarios' %}">
+                    <a class="nav-link active" href="../admin/listar_usuarios.html">
                         <i class="fas fa-users"></i>Gerenciar Usuários
                     </a>
                 </li>
-                {% endif %}
             </ul>
         </div>
     </div>
@@ -581,75 +579,57 @@
                     <h3 class="mb-0">Detalhes do Usuário</h3>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'listar_usuarios' %}">Usuários</a></li>
-                            <li class="breadcrumb-item active">{{ usuario.nome|truncatechars:20 }}</li>
+                            <li class="breadcrumb-item"><a href="../../index.html">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="detalhes_usuario.html">Usuários</a></li>
+                            <li class="breadcrumb-item active" id="userBreadcrumb">Ndombaxi Mantuidi de Almeida Bonga</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="top-bar-actions">
-                    <a href="{% url 'listar_usuarios' %}" class="btn btn-outline-primary">
+                    <a href="listar_usuarios.html" id="backButton" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i>Voltar
                     </a>
                     <span class="text-muted">
                         <i class="fas fa-user me-2"></i>
-                        {{ user.nome|default:user.username }}
+                        Administrador
                     </span>
                 </div>
             </div>
         </div>
 
-        <!-- Mensagens -->
-        {% if messages %}
-        <div class="row mb-4">
+        <!-- Container para mensagens -->
+        <div id="messagesContainer" class="row mb-4" style="display: none;">
             <div class="col-12">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                <div id="alertMessage" class="alert alert-dismissible fade show">
+                    <span id="alertText"></span>
+                    <button type="button" class="btn-close" onclick="closeAlert()"></button>
                 </div>
-                {% endfor %}
             </div>
         </div>
-        {% endif %}
 
         <!-- User Profile Header -->
         <div class="card mb-4">
             <div class="card-body text-center py-4">
                 <div class="mb-3">
-                    <img src="https://ui-avatars.com/api/?name={{ usuario.nome|urlencode }}&background=667eea&color=fff&size=120" 
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=Carlos+Mendes&background=667eea&color=fff&size=120" 
                          alt="Avatar" class="user-avatar">
                 </div>
-                <h3 class="mb-1">{{ usuario.nome }}</h3>
-                <p class="text-muted mb-3">{{ usuario.email }}</p>
-                <div class="d-flex justify-content-center mb-3 flex-wrap gap-2">
-                    {% if usuario.is_superuser %}
-                    <span class="badge bg-danger">Administrador</span>
-                    {% elif usuario.is_staff %}
-                    <span class="badge bg-warning">Staff</span>
-                    {% else %}
+                <h3 class="mb-1" id="userName">Ndombaxi Mantuidi de Almeida Bonga</h3>
+                <p class="text-muted mb-3" id="userEmail">jobdealmeida016@gmail.com</p>
+                <div class="d-flex justify-content-center mb-3 flex-wrap gap-2" id="userBadges">
                     <span class="badge bg-secondary">Usuário</span>
-                    {% endif %}
-                    
-                    {% if usuario.is_active %}
                     <span class="badge bg-success">Ativo</span>
-                    {% else %}
-                    <span class="badge bg-danger">Inativo</span>
-                    {% endif %}
                 </div>
-                <div class="btn-group flex-wrap gap-2 justify-content-center">
-                    <a href="{% url 'editar_usuario' usuario.id %}" class="btn btn-warning">
+                <div class="btn-group flex-wrap gap-2 justify-content-center" id="actionButtons">
+                    <a href="editar_usuario.html" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editUserModal">
                         <i class="fas fa-edit me-2"></i>Editar
                     </a>
-                    {% if usuario.id != user.id %}
-                    <a href="{% url 'toggle_usuario_status' usuario.id %}" class="btn btn-{% if usuario.is_active %}warning{% else %}success{% endif %}">
-                        <i class="fas fa-{% if usuario.is_active %}ban{% else %}check{% endif %} me-2"></i>
-                        {% if usuario.is_active %}Desativar{% else %}Ativar{% endif %}
+                    <a href="#" class="btn btn-warning" id="toggleStatusBtn" onclick="toggleUserStatus()">
+                        <i class="fas fa-ban me-2"></i>Desativar
                     </a>
-                    <a href="{% url 'deletar_usuario' usuario.id %}" class="btn btn-danger">
+                    <a href="deletar_usuario.html" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
                         <i class="fas fa-trash me-2"></i>Deletar
                     </a>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -658,28 +638,28 @@
         <div class="row mb-4">
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stats-card">
-                    <div class="stat-value">{{ total_vendas|default:"0" }} Kz</div>
+                    <div class="stat-value" id="totalSales">45,320.50 Kz</div>
                     <div class="stat-label">Total de Vendas</div>
                     <i class="fas fa-shopping-cart fa-2x text-primary mt-2"></i>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stats-card">
-                    <div class="stat-value">{{ vendas_30_dias|default:"0" }} Kz</div>
+                    <div class="stat-value" id="recentSales">12,450.75 Kz</div>
                     <div class="stat-label">Vendas (30 dias)</div>
                     <i class="fas fa-chart-line fa-2x text-success mt-2"></i>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stats-card">
-                    <div class="stat-value">{{ quantidade_vendida|default:"0" }}</div>
+                    <div class="stat-value" id="totalQuantity">156</div>
                     <div class="stat-label">Quantidade Vendida</div>
                     <i class="fas fa-boxes fa-2x text-info mt-2"></i>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stats-card">
-                    <div class="stat-value">{{ numero_vendas|default:"0" }}</div>
+                    <div class="stat-value" id="salesCount">45</div>
                     <div class="stat-label">Nº de Vendas</div>
                     <i class="fas fa-receipt fa-2x text-warning mt-2"></i>
                 </div>
@@ -697,27 +677,27 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">Nome Completo</div>
-                                <div class="info-value">{{ usuario.nome }}</div>
+                                <div class="info-value" id="fullName">Ndombaxi Mantuidi de Almeida Bonga</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Nome de Usuário</div>
-                                <div class="info-value">{{ usuario.username }}</div>
+                                <div class="info-value" id="username">N.M.A.B</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Email</div>
-                                <div class="info-value">{{ usuario.email }}</div>
+                                <div class="info-value" id="email">jobdealmeida016@gmail.com</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Telemóvel</div>
-                                <div class="info-value">{{ usuario.telemovel|default:"Não informado" }}</div>
+                                <div class="info-value" id="phone">+244 932 400 204</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Data Nascimento</div>
-                                <div class="info-value">{{ usuario.data_nascimento|date:"d/m/Y"|default:"Não informado" }}</div>
+                                <div class="info-value" id="birthDate">Indespunivel</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">BI/Identificação</div>
-                                <div class="info-value">{{ usuario.bilhete_identidade|default:"Não informado" }}</div>
+                                <div class="info-value" id="idNumber">Indespunivel</div>
                             </div>
                         </div>
                     </div>
@@ -734,27 +714,27 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">Bairro</div>
-                                <div class="info-value">{{ usuario.bairro|default:"Não informado" }}</div>
+                                <div class="info-value" id="neighborhood">Tchioco</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Cidade</div>
-                                <div class="info-value">{{ usuario.cidade|default:"Não informado" }}</div>
+                                <div class="info-value" id="city">Lubango</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Município</div>
-                                <div class="info-value">{{ usuario.municipio|default:"Não informado" }}</div>
+                                <div class="info-value" id="municipality">Lubango</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Província</div>
-                                <div class="info-value">{{ usuario.provincia|default:"Não informado" }}</div>
+                                <div class="info-value" id="province">Huila</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Data Registo</div>
-                                <div class="info-value">{{ usuario.date_joined|date:"d/m/Y H:i" }}</div>
+                                <div class="info-value" id="joinDate">15/03/2023 10:30</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Último Login</div>
-                                <div class="info-value">{{ usuario.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</div>
+                                <div class="info-value" id="lastLogin">Hoje, 09:15</div>
                             </div>
                         </div>
                     </div>
@@ -773,32 +753,27 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>Permissões do Sistema</h6>
-                                <ul class="list-unstyled">
+                                <ul class="list-unstyled" id="permissionsList">
                                     <li>
-                                        <i class="fas fa-{% if usuario.is_superuser %}check text-success{% else %}times text-danger{% endif %} me-2"></i>
+                                        <i class="fas fa-check text-success me-2"></i>
                                         Superusuário
                                     </li>
                                     <li>
-                                        <i class="fas fa-{% if usuario.is_staff %}check text-success{% else %}times text-danger{% endif %} me-2"></i>
+                                        <i class="fas fa-check text-success me-2"></i>
                                         Usuário Staff
                                     </li>
                                     <li>
-                                        <i class="fas fa-{% if usuario.is_active %}check text-success{% else %}times text-danger{% endif %} me-2"></i>
+                                        <i class="fas fa-check text-success me-2"></i>
                                         Conta Ativa
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-6">
                                 <h6>Lojas Gerenciadas</h6>
-                                {% if usuario.lojas_gerenciadas.all %}
-                                    <ul>
-                                        {% for loja in usuario.lojas_gerenciadas.all %}
-                                            <li>{{ loja.nome }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <p class="text-muted">Nenhuma loja gerenciada</p>
-                                {% endif %}
+                                <ul id="managedStores">
+                                    <li>Loja Central - Luanda</li>
+                                    <li>Loja Belas Shopping</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -807,8 +782,150 @@
         </div>
     </div>
 
+    <!-- Modal de Edição de Usuário -->
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="editFullName" value="Carlos Mendes">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmail" value="carlos.mendes@empresa.com">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nome de Usuário</label>
+                                <input type="text" class="form-control" id="editUsername" value="carlos.mendes">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Telemóvel</label>
+                                <input type="tel" class="form-control" id="editPhone" value="+244 923 456 789">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data de Nascimento</label>
+                                <input type="date" class="form-control" id="editBirthDate" value="1988-08-15">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Bilhete de Identidade</label>
+                                <input type="text" class="form-control" id="editIdNumber" value="1234567LA088">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Bairro</label>
+                                <input type="text" class="form-control" id="editNeighborhood" value="Maianga">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="editCity" value="Luanda">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Município</label>
+                                <input type="text" class="form-control" id="editMunicipality" value="Luanda">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Província</label>
+                                <input type="text" class="form-control" id="editProvince" value="Luanda">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="editIsStaff" checked>
+                                    <label class="form-check-label">Usuário Staff</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="editIsActive" checked>
+                                    <label class="form-check-label">Conta Ativa</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUserChanges()">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Exclusão
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-trash-alt fa-4x text-danger mb-3"></i>
+                        <h5 class="text-danger">Tem certeza que deseja deletar este usuário?</h5>
+                    </div>
+                    <p>Você está prestes a deletar permanentemente:</p>
+                    <h6 class="mb-3">Carlos Mendes</h6>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Esta ação não pode ser desfeita!
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a href="deletar-usuario.html" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Deletar Usuário
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Dados do usuário para simulação
+        const userData = {
+            id: 2,
+            nome: "Carlos Mendes",
+            username: "carlos.mendes",
+            email: "carlos.mendes@empresa.com",
+            telemovel: "+244 923 456 789",
+            data_nascimento: "15/08/1988",
+            bilhete_identidade: "1234567LA088",
+            bairro: "Maianga",
+            cidade: "Luanda",
+            municipio: "Luanda",
+            provincia: "Luanda",
+            is_superuser: false,
+            is_staff: true,
+            is_active: true,
+            date_joined: "15/03/2023 10:30",
+            last_login: "Hoje, 09:15",
+            total_vendas: "45,320.50 Kz",
+            vendas_30_dias: "12,450.75 Kz",
+            quantidade_vendida: 156,
+            numero_vendas: 45,
+            lojas_gerenciadas: ["Loja Central - Luanda", "Loja Belas Shopping"]
+        };
+
+        // Estado do usuário
+        let isUserActive = true;
+
         // Gerenciamento da sidebar responsiva
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -893,6 +1010,9 @@
                     isSidebarCollapsed = true;
                 }
             }
+            
+            // Inicializar dados do usuário
+            initializeUserData();
         });
         
         // Suporte para teclado nos dropdowns
@@ -906,14 +1026,253 @@
                 });
             }
         });
-        
-        // Confirmação para ativar/desativar usuário
-        document.querySelectorAll('a[href*="toggle_usuario_status"]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                const action = link.textContent.includes('Desativar') ? 'desativar' : 'ativar';
-                const confirmAction = confirm(`Tem certeza que deseja ${action} este usuário?`);
-                if (!confirmAction) {
-                    e.preventDefault();
+
+        // Função para inicializar dados do usuário
+        function initializeUserData() {
+            // Atualizar elementos da página
+            document.getElementById('userName').textContent = userData.nome;
+            document.getElementById('userBreadcrumb').textContent = userData.nome;
+            document.getElementById('userEmail').textContent = userData.email;
+            document.getElementById('fullName').textContent = userData.nome;
+            document.getElementById('username').textContent = userData.username;
+            document.getElementById('email').textContent = userData.email;
+            document.getElementById('phone').textContent = userData.telemovel;
+            document.getElementById('birthDate').textContent = userData.data_nascimento;
+            document.getElementById('idNumber').textContent = userData.bilhete_identidade;
+            document.getElementById('neighborhood').textContent = userData.bairro;
+            document.getElementById('city').textContent = userData.cidade;
+            document.getElementById('municipality').textContent = userData.municipio;
+            document.getElementById('province').textContent = userData.provincia;
+            document.getElementById('joinDate').textContent = userData.date_joined;
+            document.getElementById('lastLogin').textContent = userData.last_login;
+            document.getElementById('totalSales').textContent = userData.total_vendas;
+            document.getElementById('recentSales').textContent = userData.vendas_30_dias;
+            document.getElementById('totalQuantity').textContent = userData.quantidade_vendida;
+            document.getElementById('salesCount').textContent = userData.numero_vendas;
+            
+            // Atualizar avatar
+            document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.nome)}&background=667eea&color=fff&size=120`;
+            
+            // Atualizar badges
+            updateUserBadges();
+            
+            // Atualizar permissões
+            updatePermissionsList();
+            
+            // Atualizar lojas gerenciadas
+            updateManagedStores();
+        }
+
+        // Função para atualizar badges do usuário
+        function updateUserBadges() {
+            const badgesContainer = document.getElementById('userBadges');
+            badgesContainer.innerHTML = '';
+            
+            if (userData.is_superuser) {
+                badgesContainer.innerHTML += '<span class="badge bg-danger">Administrador</span>';
+            } else if (userData.is_staff) {
+                badgesContainer.innerHTML += '<span class="badge bg-warning">Staff</span>';
+            } else {
+                badgesContainer.innerHTML += '<span class="badge bg-secondary">Usuário</span>';
+            }
+            
+            badgesContainer.innerHTML += `<span class="badge bg-${userData.is_active ? 'success' : 'danger'}">
+                ${userData.is_active ? 'Ativo' : 'Inativo'}
+            </span>`;
+        }
+
+        // Função para atualizar lista de permissões
+        function updatePermissionsList() {
+            const permissionsList = document.getElementById('permissionsList');
+            permissionsList.innerHTML = '';
+            
+            permissionsList.innerHTML += `
+                <li>
+                    <i class="fas fa-${userData.is_superuser ? 'check text-success' : 'times text-danger'} me-2"></i>
+                    Superusuário
+                </li>
+            `;
+            
+            permissionsList.innerHTML += `
+                <li>
+                    <i class="fas fa-${userData.is_staff ? 'check text-success' : 'times text-danger'} me-2"></i>
+                    Usuário Staff
+                </li>
+            `;
+            
+            permissionsList.innerHTML += `
+                <li>
+                    <i class="fas fa-${userData.is_active ? 'check text-success' : 'times text-danger'} me-2"></i>
+                    Conta Ativa
+                </li>
+            `;
+        }
+
+        // Função para atualizar lojas gerenciadas
+        function updateManagedStores() {
+            const storesList = document.getElementById('managedStores');
+            storesList.innerHTML = '';
+            
+            if (userData.lojas_gerenciadas && userData.lojas_gerenciadas.length > 0) {
+                userData.lojas_gerenciadas.forEach(store => {
+                    storesList.innerHTML += `<li>${store}</li>`;
+                });
+            } else {
+                storesList.innerHTML = '<p class="text-muted">Nenhuma loja gerenciada</p>';
+            }
+        }
+
+        // Função para mostrar alerta
+        function showAlert(message, type) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const alertMessage = document.getElementById('alertMessage');
+            const alertText = document.getElementById('alertText');
+            
+            // Configurar alerta
+            alertMessage.className = `alert alert-${type} alert-dismissible fade show`;
+            alertText.textContent = message;
+            
+            // Mostrar container
+            messagesContainer.style.display = 'block';
+            
+            // Rolagem suave para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (messagesContainer.style.display !== 'none') {
+                    closeAlert();
+                }
+            }, 5000);
+        }
+
+        // Função para fechar alerta
+        function closeAlert() {
+            document.getElementById('messagesContainer').style.display = 'none';
+        }
+
+        // Função para alternar status do usuário (Ativo/Inativo)
+        function toggleUserStatus() {
+            const action = userData.is_active ? 'desativar' : 'ativar';
+            const confirmAction = confirm(`Tem certeza que deseja ${action} este usuário?`);
+            
+            if (!confirmAction) return;
+            
+            // Simular alteração de status
+            const toggleBtn = document.getElementById('toggleStatusBtn');
+            const originalText = toggleBtn.innerHTML;
+            
+            // Mostrar loading
+            toggleBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando...';
+            toggleBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Alterar status
+                userData.is_active = !userData.is_active;
+                
+                // Atualizar dados
+                updateUserBadges();
+                updatePermissionsList();
+                
+                // Atualizar botão
+                if (userData.is_active) {
+                    toggleBtn.innerHTML = '<i class="fas fa-ban me-2"></i>Desativar';
+                    toggleBtn.className = 'btn btn-warning';
+                    showAlert('Usuário ativado com sucesso!', 'success');
+                } else {
+                    toggleBtn.innerHTML = '<i class="fas fa-check me-2"></i>Ativar';
+                    toggleBtn.className = 'btn btn-success';
+                    showAlert('Usuário desativado com sucesso!', 'warning');
+                }
+                
+                toggleBtn.disabled = false;
+                
+            }, 1000);
+        }
+
+        // Função para salvar alterações do usuário
+        function saveUserChanges() {
+            // Coletar dados do formulário
+            userData.nome = document.getElementById('editFullName').value;
+            userData.email = document.getElementById('editEmail').value;
+            userData.username = document.getElementById('editUsername').value;
+            userData.telemovel = document.getElementById('editPhone').value;
+            userData.data_nascimento = formatDateToDisplay(document.getElementById('editBirthDate').value);
+            userData.bilhete_identidade = document.getElementById('editIdNumber').value;
+            userData.bairro = document.getElementById('editNeighborhood').value;
+            userData.cidade = document.getElementById('editCity').value;
+            userData.municipio = document.getElementById('editMunicipality').value;
+            userData.provincia = document.getElementById('editProvince').value;
+            userData.is_staff = document.getElementById('editIsStaff').checked;
+            userData.is_active = document.getElementById('editIsActive').checked;
+            
+            // Mostrar loading
+            const saveBtn = document.querySelector('#editUserModal .btn-primary');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Salvando...';
+            saveBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Atualizar página
+                initializeUserData();
+                
+                // Fechar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                modal.hide();
+                
+                // Restaurar botão
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+                
+                // Mostrar mensagem de sucesso
+                showAlert('Dados do usuário atualizados com sucesso!', 'success');
+                
+            }, 1500);
+        }
+
+        // Função para formatar data para exibição
+        function formatDateToDisplay(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-PT');
+        }
+
+        // Configurar dados iniciais no modal de edição
+        document.getElementById('editUserModal').addEventListener('show.bs.modal', function() {
+            document.getElementById('editFullName').value = userData.nome;
+            document.getElementById('editEmail').value = userData.email;
+            document.getElementById('editUsername').value = userData.username;
+            document.getElementById('editPhone').value = userData.telemovel;
+            
+            // Formatar data para input type="date"
+            if (userData.data_nascimento) {
+                const [day, month, year] = userData.data_nascimento.split('/');
+                document.getElementById('editBirthDate').value = `${year}-${month}-${day}`;
+            }
+            
+            document.getElementById('editIdNumber').value = userData.bilhete_identidade;
+            document.getElementById('editNeighborhood').value = userData.bairro;
+            document.getElementById('editCity').value = userData.cidade;
+            document.getElementById('editMunicipality').value = userData.municipio;
+            document.getElementById('editProvince').value = userData.provincia;
+            document.getElementById('editIsStaff').checked = userData.is_staff;
+            document.getElementById('editIsActive').checked = userData.is_active;
+        });
+
+        // Configurar botão voltar
+        document.getElementById('backButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Voltar para a lista de usuários?')) {
+                window.location.href = 'lista-usuarios.html';
+            }
+        });
+
+        // Configurar navegação do breadcrumb
+        document.querySelectorAll('.breadcrumb-item a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Sair desta página? As alterações não salvas serão perdidas.')) {
+                    window.location.href = this.getAttribute('href') || '#';
                 }
             });
         });

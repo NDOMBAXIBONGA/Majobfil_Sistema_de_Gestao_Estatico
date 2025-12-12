@@ -285,6 +285,24 @@
             margin-bottom: 20px;
         }
         
+        /* Paginação */
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .page-link {
+            color: var(--primary);
+            border: 1px solid #dee2e6;
+            margin: 0 3px;
+            border-radius: 5px;
+        }
+        
         /* Media Queries */
         @media (max-width: 1200px) {
             :root {
@@ -608,22 +626,20 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
+                    <a class="nav-link" href="../../index.html">
                         <i class="fas fa-home"></i>Dashboard
                     </a>
                 </li>
-                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'criar_usuario' %}">
+                    <a class="nav-link" href="criar_usuario.html">
                         <i class="fas fa-user-plus"></i>Criar Conta
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'listar_usuarios' %}">
+                    <a class="nav-link active" href="listar_usuarios.html">
                         <i class="fas fa-users"></i>Gerenciar Usuários
                     </a>
                 </li>
-                {% endif %}
             </ul>
         </div>
     </div>
@@ -638,30 +654,26 @@
                     <p class="mb-0 text-muted">Gerencie todos os usuários do sistema</p>
                 </div>
                 <div class="top-bar-actions">
-                    <a href="{% url 'criar_usuario' %}" class="btn btn-primary">
+                    <a href="criar_usuario.html" id="newUserBtn" class="btn btn-primary">
                         <i class="fas fa-user-plus me-2"></i>Novo Usuário
                     </a>
                     <span class="text-muted">
                         <i class="fas fa-user me-2"></i>
-                        {{ user.nome|default:user.username }}
+                        Administrador
                     </span>
                 </div>
             </div>
         </div>
 
-        <!-- Mensagens -->
-        {% if messages %}
-        <div class="row mb-4">
+        <!-- Container para mensagens -->
+        <div id="messagesContainer" class="row mb-4" style="display: none;">
             <div class="col-12">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                <div id="alertMessage" class="alert alert-dismissible fade show">
+                    <span id="alertText"></span>
+                    <button type="button" class="btn-close" onclick="closeAlert()"></button>
                 </div>
-                {% endfor %}
             </div>
         </div>
-        {% endif %}
 
         <!-- Stats Cards -->
         <div class="stats-grid fade-in">
@@ -670,7 +682,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1">Total Usuários</h5>
-                            <h2 class="mb-0">{{ total_usuarios }}</h2>
+                            <h2 class="mb-0" id="totalUsers">0</h2>
                         </div>
                         <div class="text-end">
                             <i class="fas fa-users fa-2x text-primary opacity-50"></i>
@@ -684,7 +696,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1 text-success">Usuários Ativos</h5>
-                            <h2 class="mb-0">{{ usuarios_ativos }}</h2>
+                            <h2 class="mb-0" id="activeUsers">1</h2>
                         </div>
                         <div class="text-end">
                             <i class="fas fa-user-check fa-2x text-success opacity-50"></i>
@@ -698,7 +710,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1 text-info">Administradores</h5>
-                            <h2 class="mb-0">{{ total_administradores }}</h2>
+                            <h2 class="mb-0" id="adminUsers">1</h2>
                         </div>
                         <div class="text-end">
                             <i class="fas fa-user-shield fa-2x text-info opacity-50"></i>
@@ -712,7 +724,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1 text-warning">Usuários Inativos</h5>
-                            <h2 class="mb-0">{{ usuarios_inativos }}</h2>
+                            <h2 class="mb-0" id="inactiveUsers">0</h2>
                         </div>
                         <div class="text-end">
                             <i class="fas fa-user-times fa-2x text-warning opacity-50"></i>
@@ -727,14 +739,13 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-8 mb-3 mb-md-0">
-                        <form method="get" class="d-flex">
-                            <input type="text" name="q" value="{{ query }}" 
-                                   class="form-control search-box me-2" 
+                        <div class="d-flex">
+                            <input type="text" id="searchInput" class="form-control search-box me-2" 
                                    placeholder="Buscar por nome, email ou telefone...">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="button" id="searchBtn" class="btn btn-primary">
                                 <i class="fas fa-search"></i>
                             </button>
-                        </form>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <div class="d-flex justify-content-md-end">
@@ -744,10 +755,10 @@
                                     <i class="fas fa-filter me-2"></i>Filtrar
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="?q=">Todos</a></li>
-                                    <li><a class="dropdown-item" href="?q=&status=active">Ativos</a></li>
-                                    <li><a class="dropdown-item" href="?q=&status=inactive">Inativos</a></li>
-                                    <li><a class="dropdown-item" href="?q=&role=admin">Administradores</a></li>
+                                    <li><a class="dropdown-item filter-item" href="#" data-filter="all">Todos</a></li>
+                                    <li><a class="dropdown-item filter-item" href="#" data-filter="active">Ativos</a></li>
+                                    <li><a class="dropdown-item filter-item" href="#" data-filter="inactive">Inativos</a></li>
+                                    <li><a class="dropdown-item filter-item" href="#" data-filter="admin">Administradores</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -761,146 +772,226 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h5 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Usuários</h5>
-                    <span class="badge bg-primary">
-                        {{ usuarios.paginator.count|default:0 }} usuários
+                    <span class="badge bg-primary" id="usersCount">
+                        0 usuários
                     </span>
                 </div>
             </div>
             <div class="card-body">
-                {% if usuarios %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Usuário</th>
-                                <th>Contacto</th>
-                                <th>Localização</th>
-                                <th>Permissões</th>
-                                <th>Data Registo</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for usuario in usuarios %}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://ui-avatars.com/api/?name={{ usuario.nome|urlencode }}&background=667eea&color=fff&size=50" 
-                                             alt="Avatar" class="user-avatar me-3">
-                                        <div>
-                                            <strong>{{ usuario.nome }}</strong>
-                                            <div class="text-muted small">@{{ usuario.username }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>{{ usuario.email }}</div>
-                                    {% if usuario.telemovel %}
-                                    <div class="text-muted small">{{ usuario.telemovel }}</div>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if usuario.cidade %}
-                                    <div>{{ usuario.cidade }}</div>
-                                    <div class="text-muted small">{{ usuario.provincia|default:"" }}</div>
-                                    {% else %}
-                                    <span class="text-muted">Não informado</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if usuario.is_superuser %}
-                                    <span class="badge bg-danger status-badge">Admin</span>
-                                    {% elif usuario.is_staff %}
-                                    <span class="badge bg-warning status-badge">Staff</span>
-                                    {% else %}
-                                    <span class="badge bg-secondary status-badge">Usuário</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ usuario.date_joined|date:"d/m/Y" }}</td>
-                                <td>
-                                    {% if usuario.is_active %}
-                                    <span class="badge bg-success status-badge">Ativo</span>
-                                    {% else %}
-                                    <span class="badge bg-danger status-badge">Inativo</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="{% url 'detalhes_usuario' usuario.id %}" 
-                                           class="btn btn-sm btn-outline-primary action-btn" 
-                                           title="Ver detalhes">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{% url 'editar_usuario' usuario.id %}" 
-                                           class="btn btn-sm btn-outline-warning action-btn" 
-                                           title="Editar usuário">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        {% if usuario.id != user.id %}
-                                        <a href="{% url 'deletar_usuario' usuario.id %}" 
-                                           class="btn btn-sm btn-outline-danger action-btn" 
-                                           title="Deletar usuário">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div id="usersTableContainer">
+                    <!-- Tabela será gerada aqui via JavaScript -->
+                    <div class="text-center py-5" id="loadingSpinner">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando usuários...</p>
+                    </div>
                 </div>
-                
-                <!-- Paginação -->
-                {% if usuarios.has_other_pages %}
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center mt-4 flex-wrap">
-                        {% if usuarios.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ usuarios.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        {% endif %}
-                        
-                        {% for i in usuarios.paginator.page_range %}
-                            {% if usuarios.number == i %}
-                            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                            {% elif i > usuarios.number|add:'-3' and i < usuarios.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a>
-                            </li>
-                            {% endif %}
-                        {% endfor %}
-                        
-                        {% if usuarios.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ usuarios.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                {% endif %}
-                
-                {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                    <h4 class="text-muted">Nenhum usuário encontrado</h4>
-                    <p class="text-muted">Tente ajustar seus filtros de busca ou criar um novo usuário.</p>
-                    <a href="{% url 'criar_usuario' %}" class="btn btn-primary">
-                        <i class="fas fa-user-plus me-2"></i>Criar Primeiro Usuário
-                    </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação para Exclusão -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Exclusão
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                {% endif %}
+                <div class="modal-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-trash-alt fa-4x text-danger mb-3"></i>
+                        <h5 class="text-danger">Tem certeza que deseja excluir este usuário?</h5>
+                    </div>
+                    <p>Você está prestes a excluir permanentemente:</p>
+                    <h6 class="mb-3" id="deleteUserName"></h6>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Esta ação não pode ser desfeita!
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir Usuário</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Dados de exemplo para simulação
+        const sampleUsers = [
+            {
+                id: 1,
+                nome: "João Silva",
+                username: "joao.silva",
+                email: "joao.silva@empresa.com",
+                telemovel: "+244 912 345 678",
+                cidade: "Luanda",
+                provincia: "Luanda",
+                is_superuser: true,
+                is_staff: true,
+                is_active: true,
+                date_joined: "15/03/2022"
+            },
+            {
+                id: 2,
+                nome: "Maria Santos",
+                username: "maria.santos",
+                email: "maria.santos@empresa.com",
+                telemovel: "+244 923 456 789",
+                cidade: "Luanda",
+                provincia: "Luanda",
+                is_superuser: false,
+                is_staff: true,
+                is_active: true,
+                date_joined: "20/04/2022"
+            },
+            {
+                id: 3,
+                nome: "Carlos Mendes",
+                username: "carlos.mendes",
+                email: "carlos.mendes@empresa.com",
+                telemovel: "+244 934 567 890",
+                cidade: "Luanda",
+                provincia: "Luanda",
+                is_superuser: false,
+                is_staff: false,
+                is_active: true,
+                date_joined: "10/05/2022"
+            },
+            {
+                id: 4,
+                nome: "Ana Pereira",
+                username: "ana.pereira",
+                email: "ana.pereira@empresa.com",
+                telemovel: "+244 945 678 901",
+                cidade: "Benguela",
+                provincia: "Benguela",
+                is_superuser: false,
+                is_staff: false,
+                is_active: true,
+                date_joined: "05/06/2022"
+            },
+            {
+                id: 5,
+                nome: "Pedro Costa",
+                username: "pedro.costa",
+                email: "pedro.costa@empresa.com",
+                telemovel: "+244 956 789 012",
+                cidade: "Huambo",
+                provincia: "Huambo",
+                is_superuser: false,
+                is_staff: true,
+                is_active: false,
+                date_joined: "15/07/2022"
+            },
+            {
+                id: 6,
+                nome: "Sofia Fernandes",
+                username: "sofia.fernandes",
+                email: "sofia.fernandes@empresa.com",
+                telemovel: "+244 967 890 123",
+                cidade: "Luanda",
+                provincia: "Luanda",
+                is_superuser: false,
+                is_staff: false,
+                is_active: true,
+                date_joined: "25/08/2022"
+            },
+            {
+                id: 7,
+                nome: "Miguel Rodrigues",
+                username: "miguel.rodrigues",
+                email: "miguel.rodrigues@empresa.com",
+                telemovel: "+244 978 901 234",
+                cidade: "Cabinda",
+                provincia: "Cabinda",
+                is_superuser: false,
+                is_staff: false,
+                is_active: true,
+                date_joined: "10/09/2022"
+            },
+            {
+                id: 8,
+                nome: "Isabel Martins",
+                username: "isabel.martins",
+                email: "isabel.martins@empresa.com",
+                telemovel: "+244 989 012 345",
+                cidade: "Luanda",
+                provincia: "Luanda",
+                is_superuser: false,
+                is_staff: true,
+                is_active: true,
+                date_joined: "30/09/2022"
+            },
+            {
+                id: 9,
+                nome: "Ricardo Gomes",
+                username: "ricardo.gomes",
+                email: "ricardo.gomes@empresa.com",
+                telemovel: "+244 990 123 456",
+                cidade: "Lubango",
+                provincia: "Huíla",
+                is_superuser: false,
+                is_staff: false,
+                is_active: false,
+                date_joined: "15/10/2022"
+            },
+            {
+                id: 10,
+                nome: "Beatriz Lima",
+                username: "beatriz.lima",
+                email: "beatriz.lima@empresa.com",
+                telemovel: "+244 901 234 567",
+                cidade: "Luanda",
+                provincia: "Luanda",
+                is_superuser: true,
+                is_staff: true,
+                is_active: true,
+                date_joined: "25/10/2022"
+            },
+            {
+                id: 11,
+                nome: "Hugo Sousa",
+                username: "hugo.sousa",
+                email: "hugo.sousa@empresa.com",
+                telemovel: "+244 912 345 678",
+                cidade: "Malanje",
+                provincia: "Malanje",
+                is_superuser: false,
+                is_staff: false,
+                is_active: true,
+                date_joined: "05/11/2022"
+            },
+            {
+                id: 12,
+                nome: "Catarina Alves",
+                username: "catarina.alves",
+                email: "catarina.alves@empresa.com",
+                telemovel: "+244 923 456 789",
+                cidade: "Luanda",
+                provincia: "Luanda",
+                is_superuser: false,
+                is_staff: true,
+                is_active: true,
+                date_joined: "15/11/2022"
+            }
+        ];
+
+        // Variáveis de estado
+        let allUsers = [...sampleUsers];
+        let filteredUsers = [...sampleUsers];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let currentFilter = 'all';
+        let currentSearchTerm = '';
+        let userToDelete = null;
+
         // Gerenciamento da sidebar responsiva
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -986,15 +1077,8 @@
                 }
             }
             
-            // Confirmar exclusão de usuário
-            const deleteButtons = document.querySelectorAll('a[href*="deletar_usuario"]');
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    if (!confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
-                        e.preventDefault();
-                    }
-                });
-            });
+            // Inicializar a página
+            initializePage();
         });
         
         // Suporte para teclado nos dropdowns
@@ -1006,6 +1090,420 @@
                     const bsModal = bootstrap.Modal.getInstance(modal);
                     if (bsModal) bsModal.hide();
                 });
+            }
+        });
+
+        // Função para mostrar alerta
+        function showAlert(message, type) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const alertMessage = document.getElementById('alertMessage');
+            const alertText = document.getElementById('alertText');
+            
+            // Configurar alerta
+            alertMessage.className = `alert alert-${type} alert-dismissible fade show`;
+            alertText.textContent = message;
+            
+            // Mostrar container
+            messagesContainer.style.display = 'block';
+            
+            // Rolagem suave para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (messagesContainer.style.display !== 'none') {
+                    closeAlert();
+                }
+            }, 5000);
+        }
+
+        // Função para fechar alerta
+        function closeAlert() {
+            document.getElementById('messagesContainer').style.display = 'none';
+        }
+
+        // Função para inicializar a página
+        function initializePage() {
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Carregar dados iniciais
+            loadUsersData();
+            
+            // Renderizar tabela
+            renderUsersTable();
+        }
+
+        // Função para configurar event listeners
+        function setupEventListeners() {
+            // Botão de busca
+            document.getElementById('searchBtn').addEventListener('click', searchUsers);
+            document.getElementById('searchInput').addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    searchUsers();
+                }
+            });
+            
+            // Botão novo usuário
+            document.getElementById('newUserBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'criar-usuario.html';
+            });
+            
+            // Filtros
+            document.querySelectorAll('.filter-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const filter = this.getAttribute('data-filter');
+                    applyFilter(filter);
+                });
+            });
+            
+            // Botão de confirmação de exclusão
+            document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDeleteUser);
+        }
+
+        // Função para carregar dados dos usuários
+        function loadUsersData() {
+            // Em uma aplicação real, aqui viria uma requisição AJAX
+            // Por enquanto, usamos os dados de exemplo
+            
+            // Calcular estatísticas
+            updateStats();
+        }
+
+        // Função para atualizar estatísticas
+        function updateStats() {
+            const total = allUsers.length;
+            const active = allUsers.filter(user => user.is_active).length;
+            const inactive = allUsers.filter(user => !user.is_active).length;
+            const admin = allUsers.filter(user => user.is_superuser).length;
+            
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('activeUsers').textContent = active;
+            document.getElementById('inactiveUsers').textContent = inactive;
+            document.getElementById('adminUsers').textContent = admin;
+        }
+
+        // Função para buscar usuários
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            currentSearchTerm = searchTerm;
+            
+            filterUsers();
+            renderUsersTable();
+        }
+
+        // Função para aplicar filtro
+        function applyFilter(filter) {
+            currentFilter = filter;
+            
+            filterUsers();
+            renderUsersTable();
+        }
+
+        // Função para filtrar usuários
+        function filterUsers() {
+            let filtered = [...allUsers];
+            
+            // Aplicar filtro de busca
+            if (currentSearchTerm) {
+                filtered = filtered.filter(user => 
+                    user.nome.toLowerCase().includes(currentSearchTerm) ||
+                    user.email.toLowerCase().includes(currentSearchTerm) ||
+                    (user.telemovel && user.telemovel.includes(currentSearchTerm)) ||
+                    user.username.toLowerCase().includes(currentSearchTerm)
+                );
+            }
+            
+            // Aplicar filtro de status
+            if (currentFilter === 'active') {
+                filtered = filtered.filter(user => user.is_active);
+            } else if (currentFilter === 'inactive') {
+                filtered = filtered.filter(user => !user.is_active);
+            } else if (currentFilter === 'admin') {
+                filtered = filtered.filter(user => user.is_superuser);
+            }
+            // 'all' não aplica filtro adicional
+            
+            filteredUsers = filtered;
+            currentPage = 1; // Resetar para primeira página
+        }
+
+        // Função para renderizar tabela de usuários
+        function renderUsersTable() {
+            const container = document.getElementById('usersTableContainer');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            // Esconder spinner de carregamento
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+            
+            // Calcular paginação
+            const totalItems = filteredUsers.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+            const currentUsers = filteredUsers.slice(startIndex, endIndex);
+            
+            // Atualizar contador
+            document.getElementById('usersCount').textContent = `${totalItems} usuário${totalItems !== 1 ? 's' : ''}`;
+            
+            if (currentUsers.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Nenhum usuário encontrado</h4>
+                        <p class="text-muted">Tente ajustar seus filtros de busca ou criar um novo usuário.</p>
+                        <button id="createFirstUserBtn" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Criar Primeiro Usuário
+                        </button>
+                    </div>
+                `;
+                
+                // Adicionar evento ao botão
+                document.getElementById('createFirstUserBtn').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'criar-usuario.html';
+                });
+                
+                return;
+            }
+            
+            // Gerar HTML da tabela
+            let tableHTML = `
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Contacto</th>
+                                <th>Localização</th>
+                                <th>Permissões</th>
+                                <th>Data Registo</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            currentUsers.forEach(user => {
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nome)}&background=667eea&color=fff&size=50`;
+                
+                let permissionBadge = '';
+                if (user.is_superuser) {
+                    permissionBadge = '<span class="badge bg-danger status-badge">Admin</span>';
+                } else if (user.is_staff) {
+                    permissionBadge = '<span class="badge bg-warning status-badge">Staff</span>';
+                } else {
+                    permissionBadge = '<span class="badge bg-secondary status-badge">Usuário</span>';
+                }
+                
+                const statusBadge = user.is_active 
+                    ? '<span class="badge bg-success status-badge">Ativo</span>' 
+                    : '<span class="badge bg-danger status-badge">Inativo</span>';
+                
+                // Verificar se é o usuário atual (não pode deletar a si mesmo)
+                const canDelete = user.id !== 1; // Supondo que o admin tenha ID 1
+                
+                tableHTML += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="${avatarUrl}" 
+                                     alt="Avatar" class="user-avatar me-3">
+                                <div>
+                                    <strong>${user.nome}</strong>
+                                    <div class="text-muted small">@${user.username}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>${user.email}</div>
+                            ${user.telemovel ? `<div class="text-muted small">${user.telemovel}</div>` : ''}
+                        </td>
+                        <td>
+                            ${user.cidade ? `
+                                <div>${user.cidade}</div>
+                                <div class="text-muted small">${user.provincia || ''}</div>
+                            ` : '<span class="text-muted">Não informado</span>'}
+                        </td>
+                        <td>${permissionBadge}</td>
+                        <td>${formatDate(user.date_joined)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="detalhes-usuario.html?id=${user.id}" 
+                                   class="btn btn-sm btn-outline-primary action-btn" 
+                                   title="Ver detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="editar-usuario.html?id=${user.id}" 
+                                   class="btn btn-sm btn-outline-warning action-btn" 
+                                   title="Editar usuário">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                ${canDelete ? `
+                                <button type="button" class="btn btn-sm btn-outline-danger action-btn delete-user-btn" 
+                                        title="Excluir usuário" data-user-id="${user.id}" data-user-name="${user.nome}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            // Adicionar paginação se necessário
+            if (totalPages > 1) {
+                tableHTML += generatePagination(totalPages);
+            }
+            
+            container.innerHTML = tableHTML;
+            
+            // Adicionar eventos aos botões de exclusão
+            document.querySelectorAll('.delete-user-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    showDeleteConfirmation(userId, userName);
+                });
+            });
+        }
+
+        // Função para formatar data
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const [day, month, year] = dateString.split('/');
+            return `${day}/${month}/${year}`;
+        }
+
+        // Função para gerar paginação
+        function generatePagination(totalPages) {
+            let paginationHTML = `
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-4 flex-wrap">
+            `;
+            
+            // Botão anterior
+            if (currentPage > 1) {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                `;
+            }
+            
+            // Páginas
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    const activeClass = i === currentPage ? 'active' : '';
+                    paginationHTML += `
+                        <li class="page-item ${activeClass}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    paginationHTML += `
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    `;
+                }
+            }
+            
+            // Botão próximo
+            if (currentPage < totalPages) {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                `;
+            }
+            
+            paginationHTML += `
+                    </ul>
+                </nav>
+            `;
+            
+            return paginationHTML;
+        }
+
+        // Função para mostrar confirmação de exclusão
+        function showDeleteConfirmation(userId, userName) {
+            userToDelete = userId;
+            document.getElementById('deleteUserName').textContent = userName;
+            
+            const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            modal.show();
+        }
+
+        // Função para confirmar exclusão de usuário
+        function confirmDeleteUser() {
+            if (!userToDelete) return;
+            
+            // Simular exclusão
+            const originalIndex = allUsers.findIndex(user => user.id == userToDelete);
+            if (originalIndex !== -1) {
+                allUsers.splice(originalIndex, 1);
+                
+                // Fechar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+                modal.hide();
+                
+                // Atualizar dados
+                filterUsers();
+                updateStats();
+                renderUsersTable();
+                
+                // Mostrar mensagem de sucesso
+                showAlert('Usuário excluído com sucesso!', 'success');
+                
+                userToDelete = null;
+            }
+        }
+
+        // Event delegation para paginação
+        document.addEventListener('click', function(e) {
+            // Paginação
+            if (e.target.classList.contains('page-link') && e.target.hasAttribute('data-page')) {
+                e.preventDefault();
+                const page = parseInt(e.target.getAttribute('data-page'));
+                if (page !== currentPage) {
+                    currentPage = page;
+                    renderUsersTable();
+                    
+                    // Rolagem suave para o topo da tabela
+                    const tableContainer = document.querySelector('.card.fade-in');
+                    if (tableContainer) {
+                        tableContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+            
+            // Links de detalhes e edição
+            if (e.target.closest('a[href*="detalhes-usuario.html"]') || e.target.closest('a[href*="editar-usuario.html"]')) {
+                const link = e.target.closest('a');
+                if (link && link.getAttribute('href').includes('id=')) {
+                    // Em uma aplicação real, você salvaria o ID em localStorage ou sessionStorage
+                    // para que a próxima página possa carregar os dados corretos
+                    const urlParams = new URLSearchParams(link.getAttribute('href').split('?')[1]);
+                    const userId = urlParams.get('id');
+                    localStorage.setItem('currentUserId', userId);
+                }
             }
         });
     </script>

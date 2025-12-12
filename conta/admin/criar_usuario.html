@@ -466,22 +466,20 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
+                    <a class="nav-link" href="../../index.html">
                         <i class="fas fa-home"></i>Dashboard
                     </a>
                 </li>
-                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'criar_usuario' %}">
+                    <a class="nav-link active" href="criar_usuario.html">
                         <i class="fas fa-user-plus"></i>Criar Conta
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'listar_usuarios' %}">
+                    <a class="nav-link" href="listar_usuarios.html">
                         <i class="fas fa-users"></i>Gerenciar Usuários
                     </a>
                 </li>
-                {% endif %}
             </ul>
         </div>
     </div>
@@ -496,30 +494,26 @@
                     <p class="mb-0 text-muted">Preencha os dados abaixo para criar uma nova conta de usuário</p>
                 </div>
                 <div class="top-bar-actions">
-                    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                    <a href="#" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i>Voltar
                     </a>
                     <span class="text-muted">
                         <i class="fas fa-user me-2"></i>
-                        {{ user.nome|default:user.username }}
+                        Administrador
                     </span>
                 </div>
             </div>
         </div>
 
-        <!-- Mensagens -->
-        {% if messages %}
-        <div class="row">
+        <!-- Container para mensagens -->
+        <div id="messagesContainer" class="row" style="display: none;">
             <div class="col-12">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                <div id="alertMessage" class="alert alert-dismissible fade show">
+                    <span id="alertText"></span>
+                    <button type="button" class="btn-close" onclick="closeAlert()"></button>
                 </div>
-                {% endfor %}
             </div>
         </div>
-        {% endif %}
 
         <!-- Form Card -->
         <div class="row justify-content-center">
@@ -530,9 +524,7 @@
                         <p class="mb-0 opacity-75">Preencha os dados abaixo para criar uma nova conta de usuário</p>
                     </div>
                     <div class="card-body p-4">
-                        <form method="post">
-                            {% csrf_token %}
-                            
+                        <form id="userForm">
                             <!-- Informações de Acesso -->
                             <h5 class="section-title mt-0">
                                 <i class="fas fa-key me-2"></i>Informações de Acesso
@@ -540,20 +532,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.username }}
+                                        <input type="text" class="form-control" id="id_username" name="username" placeholder="Nome de usuário" required>
                                         <label for="id_username">Nome de usuário *</label>
-                                        {% if form.username.errors %}
-                                            <div class="errorlist">{{ form.username.errors }}</div>
-                                        {% endif %}
+                                        <div id="usernameError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.email }}
+                                        <input type="email" class="form-control" id="id_email" name="email" placeholder="Email" required>
                                         <label for="id_email">Email *</label>
-                                        {% if form.email.errors %}
-                                            <div class="errorlist">{{ form.email.errors }}</div>
-                                        {% endif %}
+                                        <div id="emailError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -561,26 +549,25 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.password1 }}
+                                        <input type="password" class="form-control" id="id_password1" name="password1" placeholder="Senha" required>
                                         <label for="id_password1">Senha *</label>
-                                        {% if form.password1.errors %}
-                                            <div class="errorlist">{{ form.password1.errors }}</div>
-                                        {% endif %}
-                                        {% if form.password1.help_text %}
-                                            <div class="form-text">{{ form.password1.help_text }}</div>
-                                        {% endif %}
+                                        <div id="password1Error" class="errorlist" style="display: none;"></div>
+                                        <div class="form-text text-muted">
+                                            <small>
+                                                <ul class="mb-0 ps-3">
+                                                    <li>Pelo menos 8 caracteres</li>
+                                                    <li>Pelo menos uma letra maiúscula</li>
+                                                    <li>Pelo menos um número</li>
+                                                </ul>
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.password2 }}
+                                        <input type="password" class="form-control" id="id_password2" name="password2" placeholder="Confirmar Senha" required>
                                         <label for="id_password2">Confirmar Senha *</label>
-                                        {% if form.password2.errors %}
-                                            <div class="errorlist">{{ form.password2.errors }}</div>
-                                        {% endif %}
-                                        {% if form.password2.help_text %}
-                                            <div class="form-text">{{ form.password2.help_text }}</div>
-                                        {% endif %}
+                                        <div id="password2Error" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -592,11 +579,9 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-floating">
-                                        {{ form.nome }}
+                                        <input type="text" class="form-control" id="id_nome" name="nome" placeholder="Nome Completo" required>
                                         <label for="id_nome">Nome Completo *</label>
-                                        {% if form.nome.errors %}
-                                            <div class="errorlist">{{ form.nome.errors }}</div>
-                                        {% endif %}
+                                        <div id="nomeError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -604,20 +589,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.telemovel }}
+                                        <input type="tel" class="form-control" id="id_telemovel" name="telemovel" placeholder="Telemóvel">
                                         <label for="id_telemovel">Telemóvel</label>
-                                        {% if form.telemovel.errors %}
-                                            <div class="errorlist">{{ form.telemovel.errors }}</div>
-                                        {% endif %}
+                                        <div id="telemovelError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.data_nascimento }}
+                                        <input type="date" class="form-control" id="id_data_nascimento" name="data_nascimento" placeholder="Data de Nascimento">
                                         <label for="id_data_nascimento">Data de Nascimento</label>
-                                        {% if form.data_nascimento.errors %}
-                                            <div class="errorlist">{{ form.data_nascimento.errors }}</div>
-                                        {% endif %}
+                                        <div id="dataNascimentoError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -625,11 +606,9 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-floating">
-                                        {{ form.bilhete_identidade }}
+                                        <input type="text" class="form-control" id="id_bilhete_identidade" name="bilhete_identidade" placeholder="Bilhete de Identidade">
                                         <label for="id_bilhete_identidade">Bilhete de Identidade</label>
-                                        {% if form.bilhete_identidade.errors %}
-                                            <div class="errorlist">{{ form.bilhete_identidade.errors }}</div>
-                                        {% endif %}
+                                        <div id="bilheteIdentidadeError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -641,20 +620,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.bairro }}
+                                        <input type="text" class="form-control" id="id_bairro" name="bairro" placeholder="Bairro">
                                         <label for="id_bairro">Bairro</label>
-                                        {% if form.bairro.errors %}
-                                            <div class="errorlist">{{ form.bairro.errors }}</div>
-                                        {% endif %}
+                                        <div id="bairroError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.cidade }}
+                                        <input type="text" class="form-control" id="id_cidade" name="cidade" placeholder="Cidade">
                                         <label for="id_cidade">Cidade</label>
-                                        {% if form.cidade.errors %}
-                                            <div class="errorlist">{{ form.cidade.errors }}</div>
-                                        {% endif %}
+                                        <div id="cidadeError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -662,20 +637,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.municipio }}
+                                        <input type="text" class="form-control" id="id_municipio" name="municipio" placeholder="Município">
                                         <label for="id_municipio">Município</label>
-                                        {% if form.municipio.errors %}
-                                            <div class="errorlist">{{ form.municipio.errors }}</div>
-                                        {% endif %}
+                                        <div id="municipioError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        {{ form.provincia }}
+                                        <input type="text" class="form-control" id="id_provincia" name="provincia" placeholder="Província">
                                         <label for="id_provincia">Província</label>
-                                        {% if form.provincia.errors %}
-                                            <div class="errorlist">{{ form.provincia.errors }}</div>
-                                        {% endif %}
+                                        <div id="provinciaError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -687,42 +658,36 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-check form-switch mb-3">
-                                        {{ form.is_staff }}
+                                        <input class="form-check-input" type="checkbox" id="id_is_staff" name="is_staff">
                                         <label class="form-check-label" for="id_is_staff">
                                             Usuário da Equipe (Staff)
                                         </label>
                                         <small class="form-text text-muted d-block">
                                             Usuários staff podem acessar a área administrativa.
                                         </small>
-                                        {% if form.is_staff.errors %}
-                                            <div class="errorlist">{{ form.is_staff.errors }}</div>
-                                        {% endif %}
+                                        <div id="isStaffError" class="errorlist" style="display: none;"></div>
                                     </div>
                                     
                                     <div class="form-check form-switch mb-3">
-                                        {{ form.is_superuser }}
+                                        <input class="form-check-input" type="checkbox" id="id_is_superuser" name="is_superuser">
                                         <label class="form-check-label" for="id_is_superuser">
                                             Superusuário
                                         </label>
                                         <small class="form-text text-muted d-block">
                                             Superusuários têm acesso completo a todas as funcionalidades do sistema.
                                         </small>
-                                        {% if form.is_superuser.errors %}
-                                            <div class="errorlist">{{ form.is_superuser.errors }}</div>
-                                        {% endif %}
+                                        <div id="isSuperuserError" class="errorlist" style="display: none;"></div>
                                     </div>
                                     
                                     <div class="form-check form-switch">
-                                        {{ form.is_active }}
+                                        <input class="form-check-input" type="checkbox" id="id_is_active" name="is_active" checked>
                                         <label class="form-check-label" for="id_is_active">
                                             Conta Ativa
                                         </label>
                                         <small class="form-text text-muted d-block">
                                             Desmarque para desativar a conta do usuário.
                                         </small>
-                                        {% if form.is_active.errors %}
-                                            <div class="errorlist">{{ form.is_active.errors }}</div>
-                                        {% endif %}
+                                        <div id="isActiveError" class="errorlist" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -730,7 +695,7 @@
                             <!-- Submit Buttons -->
                             <div class="row mt-4">
                                 <div class="col-md-12 d-flex justify-content-between">
-                                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                    <a href="#" class="btn btn-outline-secondary">
                                         <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
                                     </a>
                                     <button type="submit" class="btn btn-primary">
@@ -845,15 +810,212 @@
             }
         });
         
-        // Validação de formulário
-        document.querySelector('form').addEventListener('submit', (e) => {
-            const password1 = document.getElementById('id_password1');
-            const password2 = document.getElementById('id_password2');
+        // Função para mostrar alerta
+        function showAlert(message, type) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const alertMessage = document.getElementById('alertMessage');
+            const alertText = document.getElementById('alertText');
             
-            if (password1 && password2 && password1.value !== password2.value) {
-                e.preventDefault();
-                alert('As senhas não coincidem!');
-                password2.focus();
+            // Configurar alerta
+            alertMessage.className = `alert alert-${type} alert-dismissible fade show`;
+            alertText.textContent = message;
+            
+            // Mostrar container
+            messagesContainer.style.display = 'block';
+            
+            // Rolagem suave para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (messagesContainer.style.display !== 'none') {
+                    closeAlert();
+                }
+            }, 5000);
+        }
+        
+        // Função para fechar alerta
+        function closeAlert() {
+            document.getElementById('messagesContainer').style.display = 'none';
+        }
+        
+        // Função para mostrar erro em campo específico
+        function showFieldError(fieldId, errorMessage) {
+            const errorElement = document.getElementById(`${fieldId}Error`);
+            if (errorElement) {
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = 'block';
+                
+                // Destacar campo com erro
+                const field = document.getElementById(fieldId);
+                field.classList.add('is-invalid');
+            }
+        }
+        
+        // Função para limpar todos os erros
+        function clearAllErrors() {
+            // Limpar mensagens de erro
+            document.querySelectorAll('.errorlist').forEach(element => {
+                element.style.display = 'none';
+                element.textContent = '';
+            });
+            
+            // Remover destaque de erro dos campos
+            document.querySelectorAll('.form-control').forEach(field => {
+                field.classList.remove('is-invalid');
+            });
+        }
+        
+        // Validação de senha
+        function validatePassword(password) {
+            const errors = [];
+            
+            if (password.length < 8) {
+                errors.push('A senha deve ter pelo menos 8 caracteres.');
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                errors.push('A senha deve conter pelo menos uma letra maiúscula.');
+            }
+            
+            if (!/\d/.test(password)) {
+                errors.push('A senha deve conter pelo menos um número.');
+            }
+            
+            return errors;
+        }
+        
+        // Validação de email
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Validação de telefone
+        function validatePhone(phone) {
+            if (!phone) return true; // Telefone é opcional
+            const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,20}$/;
+            return phoneRegex.test(phone);
+        }
+        
+        // Processamento do formulário
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Limpar erros anteriores
+            clearAllErrors();
+            
+            // Coletar dados do formulário
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Validações
+            let hasErrors = false;
+            const errors = {};
+            
+            // Username (obrigatório)
+            if (!data.username || data.username.trim().length < 3) {
+                errors.username = 'Nome de usuário deve ter pelo menos 3 caracteres.';
+                hasErrors = true;
+            }
+            
+            // Email (obrigatório)
+            if (!data.email || !validateEmail(data.email)) {
+                errors.email = 'Por favor, insira um email válido.';
+                hasErrors = true;
+            }
+            
+            // Senha (obrigatório)
+            const passwordErrors = validatePassword(data.password1);
+            if (passwordErrors.length > 0) {
+                errors.password1 = passwordErrors.join(' ');
+                hasErrors = true;
+            }
+            
+            // Confirmação de senha
+            if (data.password1 !== data.password2) {
+                errors.password2 = 'As senhas não coincidem.';
+                hasErrors = true;
+            }
+            
+            // Nome (obrigatório)
+            if (!data.nome || data.nome.trim().length < 2) {
+                errors.nome = 'Nome completo é obrigatório.';
+                hasErrors = true;
+            }
+            
+            // Telefone (opcional, mas se preenchido, valida)
+            if (data.telemovel && !validatePhone(data.telemovel)) {
+                errors.telemovel = 'Número de telefone inválido.';
+                hasErrors = true;
+            }
+            
+            // Data de nascimento (opcional, mas se preenchido, valida)
+            if (data.data_nascimento) {
+                const birthDate = new Date(data.data_nascimento);
+                const today = new Date();
+                if (birthDate > today) {
+                    errors.data_nascimento = 'Data de nascimento não pode ser no futuro.';
+                    hasErrors = true;
+                }
+            }
+            
+            // Se houver erros, mostrá-los
+            if (hasErrors) {
+                for (const [field, errorMessage] of Object.entries(errors)) {
+                    showFieldError(field, errorMessage);
+                }
+                showAlert('Por favor, corrija os erros no formulário.', 'danger');
+                return;
+            }
+            
+            // Simular envio do formulário (substituir por AJAX real se necessário)
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Criando...';
+            submitButton.disabled = true;
+            
+            // Simular requisição ao servidor
+            setTimeout(() => {
+                // Sucesso - resetar formulário e mostrar mensagem
+                this.reset();
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                
+                // Mostrar mensagem de sucesso
+                showAlert('Usuário criado com sucesso!', 'success');
+                
+                // Opcional: redirecionar ou fazer outra ação
+                console.log('Dados do usuário criado:', data);
+                
+                // Opcional: redirecionar após 2 segundos
+                // setTimeout(() => {
+                //     window.location.href = 'lista-usuarios.html';
+                // }, 2000);
+                
+            }, 1500);
+        });
+        
+        // Validação em tempo real para senhas
+        document.getElementById('id_password2').addEventListener('input', function() {
+            const password1 = document.getElementById('id_password1').value;
+            const password2 = this.value;
+            
+            if (password1 && password2 && password1 !== password2) {
+                showFieldError('password2', 'As senhas não coincidem.');
+            } else {
+                const errorElement = document.getElementById('password2Error');
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                    this.classList.remove('is-invalid');
+                }
+            }
+        });
+        
+        // Validação de email em tempo real
+        document.getElementById('id_email').addEventListener('blur', function() {
+            if (this.value && !validateEmail(this.value)) {
+                showFieldError('email', 'Por favor, insira um email válido.');
             }
         });
     </script>

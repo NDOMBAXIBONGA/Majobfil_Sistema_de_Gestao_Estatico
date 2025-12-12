@@ -270,10 +270,8 @@
             border: none;
         }
         
-        .errorlist {
+        .error-message {
             color: #dc3545;
-            padding-left: 0;
-            list-style: none;
             font-size: 0.875rem;
             margin-top: 0.25rem;
         }
@@ -610,22 +608,20 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
+                    <a class="nav-link" href="../../index.html">
                         <i class="fas fa-home"></i>Dashboard
                     </a>
                 </li>
-                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'criar_usuario' %}">
+                    <a class="nav-link" href="criar_usuario.html">
                         <i class="fas fa-user-plus"></i>Criar Conta
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'listar_usuarios' %}">
+                    <a class="nav-link active" href="listar_usuarios.html">
                         <i class="fas fa-users"></i>Gerenciar Usuários
                     </a>
                 </li>
-                {% endif %}
             </ul>
         </div>
     </div>
@@ -639,38 +635,34 @@
                     <h3 class="mb-0">Editar Usuário</h3>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'listar_usuarios' %}">Usuários</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'detalhes_usuario' usuario.id %}">{{ usuario.nome|truncatechars:20 }}</a></li>
+                            <li class="breadcrumb-item"><a href="../../index.html">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="listar_usuarios.html">Usuários</a></li>
+                            <li class="breadcrumb-item"><a href="detalhes_usuario.html" id="userDetailLink">Ndombaxi Mantuidi de Almeida Bonga</a></li>
                             <li class="breadcrumb-item active">Editar</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="top-bar-actions">
-                    <a href="{% url 'detalhes_usuario' usuario.id %}" class="btn btn-outline-primary">
+                    <a href="listar_usuarios.html" id="backButton" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i>Voltar
                     </a>
                     <span class="text-muted">
                         <i class="fas fa-user me-2"></i>
-                        {{ user.nome|default:user.username }}
+                        Administrador
                     </span>
                 </div>
             </div>
         </div>
 
-        <!-- Mensagens -->
-        {% if messages %}
-        <div class="row mb-4">
+        <!-- Container para mensagens -->
+        <div id="messagesContainer" class="row mb-4" style="display: none;">
             <div class="col-12">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                <div id="alertMessage" class="alert alert-dismissible fade show">
+                    <span id="alertText"></span>
+                    <button type="button" class="btn-close" onclick="closeAlert()"></button>
                 </div>
-                {% endfor %}
             </div>
         </div>
-        {% endif %}
 
         <!-- Form Card -->
         <div class="row justify-content-center">
@@ -680,50 +672,34 @@
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <div>
                                 <h4 class="mb-1"><i class="fas fa-user-edit me-2"></i>Editar Usuário</h4>
-                                <p class="mb-0 opacity-75">Atualize os dados do usuário {{ usuario.nome }}</p>
+                                <p class="mb-0 opacity-75">Atualize os dados do usuário <span id="editingUserName">Ana Santos</span></p>
                             </div>
                             <div class="text-center">
-                                <img src="https://ui-avatars.com/api/?name={{ usuario.nome|urlencode }}&background=667eea&color=fff&size=100" 
+                                <img id="userAvatar" src="https://ui-avatars.com/api/?name=Ana+Santos&background=667eea&color=fff&size=100" 
                                      alt="Avatar" class="user-avatar mb-2">
-                                <div>
-                                    {% if usuario.is_superuser %}
-                                    <span class="badge bg-danger me-1">Admin</span>
-                                    {% elif usuario.is_staff %}
-                                    <span class="badge bg-warning me-1">Staff</span>
-                                    {% else %}
-                                    <span class="badge bg-secondary me-1">Usuário</span>
-                                    {% endif %}
-                                    {% if usuario.is_active %}
+                                <div id="userBadges">
+                                    <span class="badge bg-warning me-1">Admin</span>
                                     <span class="badge bg-success">Ativo</span>
-                                    {% else %}
-                                    <span class="badge bg-danger">Inativo</span>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <form method="post" id="formEditarUsuario">
-                            {% csrf_token %}
-                            
+                        <form id="formEditarUsuario">
                             <!-- Informações de Acesso -->
                             <h5 class="section-title mt-0">
                                 <i class="fas fa-key me-2"></i>Informações de Acesso
                             </h5>
                             <div class="form-grid mb-4">
                                 <div class="form-floating">
-                                    {{ form.username }}
-                                    <label for="id_username">Nome de usuário *</label>
-                                    {% if form.username.errors %}
-                                        <div class="errorlist">{{ form.username.errors }}</div>
-                                    {% endif %}
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Nome de usuário" value="ana.santos" required>
+                                    <label for="username">Nome de usuário *</label>
+                                    <div id="usernameError" class="error-message" style="display: none;"></div>
                                 </div>
                                 <div class="form-floating">
-                                    {{ form.email }}
-                                    <label for="id_email">Email *</label>
-                                    {% if form.email.errors %}
-                                        <div class="errorlist">{{ form.email.errors }}</div>
-                                    {% endif %}
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="ana.santos@empresa.com" required>
+                                    <label for="email">Email *</label>
+                                    <div id="emailError" class="error-message" style="display: none;"></div>
                                 </div>
                             </div>
                             
@@ -743,32 +719,24 @@
                             </h5>
                             <div class="form-grid mb-4">
                                 <div class="form-floating">
-                                    {{ form.nome }}
-                                    <label for="id_nome">Nome Completo *</label>
-                                    {% if form.nome.errors %}
-                                        <div class="errorlist">{{ form.nome.errors }}</div>
-                                    {% endif %}
+                                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome Completo" value="Ana Santos" required>
+                                    <label for="nome">Nome Completo *</label>
+                                    <div id="nomeError" class="error-message" style="display: none;"></div>
                                 </div>
                                 <div class="form-floating">
-                                    {{ form.telemovel }}
-                                    <label for="id_telemovel">Telemóvel</label>
-                                    {% if form.telemovel.errors %}
-                                        <div class="errorlist">{{ form.telemovel.errors }}</div>
-                                    {% endif %}
+                                    <input type="tel" class="form-control" id="telemovel" name="telemovel" placeholder="Telemóvel" value="+244 934 567 890">
+                                    <label for="telemovel">Telemóvel</label>
+                                    <div id="telemovelError" class="error-message" style="display: none;"></div>
                                 </div>
                                 <div class="form-floating">
-                                    {{ form.data_nascimento }}
-                                    <label for="id_data_nascimento">Data de Nascimento</label>
-                                    {% if form.data_nascimento.errors %}
-                                        <div class="errorlist">{{ form.data_nascimento.errors }}</div>
-                                    {% endif %}
+                                    <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" placeholder="Data de Nascimento" value="1990-04-22">
+                                    <label for="data_nascimento">Data de Nascimento</label>
+                                    <div id="dataNascimentoError" class="error-message" style="display: none;"></div>
                                 </div>
                                 <div class="form-floating">
-                                    {{ form.bilhete_identidade }}
-                                    <label for="id_bilhete_identidade">Bilhete de Identidade</label>
-                                    {% if form.bilhete_identidade.errors %}
-                                        <div class="errorlist">{{ form.bilhete_identidade.errors }}</div>
-                                    {% endif %}
+                                    <input type="text" class="form-control" id="bilhete_identidade" name="bilhete_identidade" placeholder="Bilhete de Identidade" value="7654321LA022">
+                                    <label for="bilhete_identidade">Bilhete de Identidade</label>
+                                    <div id="bilheteIdentidadeError" class="error-message" style="display: none;"></div>
                                 </div>
                             </div>
                             
@@ -778,32 +746,24 @@
                             </h5>
                             <div class="form-grid mb-4">
                                 <div class="form-floating">
-                                    {{ form.bairro }}
-                                    <label for="id_bairro">Bairro</label>
-                                    {% if form.bairro.errors %}
-                                        <div class="errorlist">{{ form.bairro.errors }}</div>
-                                    {% endif %}
+                                    <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro" value="Kilamba">
+                                    <label for="bairro">Bairro</label>
+                                    <div id="bairroError" class="error-message" style="display: none;"></div>
                                 </div>
                                 <div class="form-floating">
-                                    {{ form.cidade }}
-                                    <label for="id_cidade">Cidade</label>
-                                    {% if form.cidade.errors %}
-                                        <div class="errorlist">{{ form.cidade.errors }}</div>
-                                    {% endif %}
+                                    <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade" value="Luanda">
+                                    <label for="cidade">Cidade</label>
+                                    <div id="cidadeError" class="error-message" style="display: none;"></div>
                                 </div>
                                 <div class="form-floating">
-                                    {{ form.municipio }}
-                                    <label for="id_municipio">Município</label>
-                                    {% if form.municipio.errors %}
-                                        <div class="errorlist">{{ form.municipio.errors }}</div>
-                                    {% endif %}
+                                    <input type="text" class="form-control" id="municipio" name="municipio" placeholder="Município" value="Luanda">
+                                    <label for="municipio">Município</label>
+                                    <div id="municipioError" class="error-message" style="display: none;"></div>
                                 </div>
                                 <div class="form-floating">
-                                    {{ form.provincia }}
-                                    <label for="id_provincia">Província</label>
-                                    {% if form.provincia.errors %}
-                                        <div class="errorlist">{{ form.provincia.errors }}</div>
-                                    {% endif %}
+                                    <input type="text" class="form-control" id="provincia" name="provincia" placeholder="Província" value="Luanda">
+                                    <label for="provincia">Província</label>
+                                    <div id="provinciaError" class="error-message" style="display: none;"></div>
                                 </div>
                             </div>
                             
@@ -814,42 +774,36 @@
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <div class="form-check form-switch mb-3 p-3 bg-light rounded">
-                                        {{ form.is_staff }}
-                                        <label class="form-check-label fw-bold" for="id_is_staff">
+                                        <input class="form-check-input" type="checkbox" id="is_staff" name="is_staff" checked>
+                                        <label class="form-check-label fw-bold" for="is_staff">
                                             Usuário da Equipe (Staff)
                                         </label>
                                         <small class="form-text text-muted d-block mt-1">
                                             Usuários staff podem acessar a área administrativa.
                                         </small>
-                                        {% if form.is_staff.errors %}
-                                            <div class="errorlist">{{ form.is_staff.errors }}</div>
-                                        {% endif %}
+                                        <div id="isStaffError" class="error-message" style="display: none;"></div>
                                     </div>
                                     
                                     <div class="form-check form-switch mb-3 p-3 bg-light rounded">
-                                        {{ form.is_superuser }}
-                                        <label class="form-check-label fw-bold" for="id_is_superuser">
+                                        <input class="form-check-input" type="checkbox" id="is_superuser" name="is_superuser">
+                                        <label class="form-check-label fw-bold" for="is_superuser">
                                             Superusuário
                                         </label>
                                         <small class="form-text text-muted d-block mt-1">
                                             Superusuários têm acesso completo a todas as funcionalidades do sistema.
                                         </small>
-                                        {% if form.is_superuser.errors %}
-                                            <div class="errorlist">{{ form.is_superuser.errors }}</div>
-                                        {% endif %}
+                                        <div id="isSuperuserError" class="error-message" style="display: none;"></div>
                                     </div>
                                     
                                     <div class="form-check form-switch mb-3 p-3 bg-light rounded">
-                                        {{ form.is_active }}
-                                        <label class="form-check-label fw-bold" for="id_is_active">
+                                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                        <label class="form-check-label fw-bold" for="is_active">
                                             Conta Ativa
                                         </label>
                                         <small class="form-text text-muted d-block mt-1">
                                             Desmarque para desativar a conta do usuário.
                                         </small>
-                                        {% if form.is_active.errors %}
-                                            <div class="errorlist">{{ form.is_active.errors }}</div>
-                                        {% endif %}
+                                        <div id="isActiveError" class="error-message" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -858,10 +812,10 @@
                             <div class="row mt-4 pt-4 border-top">
                                 <div class="col-md-12 d-flex justify-content-between flex-wrap gap-2">
                                     <div class="d-flex flex-wrap gap-2">
-                                        <a href="{% url 'detalhes_usuario' usuario.id %}" class="btn btn-outline-secondary">
+                                        <a href="listar_usuarios.html" id="cancelButton" class="btn btn-outline-secondary">
                                             <i class="fas fa-times me-2"></i>Cancelar
                                         </a>
-                                        <a href="{% url 'listar_usuarios' %}" class="btn btn-outline-secondary">
+                                        <a href="listar_usuarios.html" id="backToListButton" class="btn btn-outline-secondary">
                                             <i class="fas fa-arrow-left me-2"></i>Voltar à Lista
                                         </a>
                                     </div>
@@ -885,11 +839,10 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Redefinir Senha</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formRedefinirSenha">
-                        {% csrf_token %}
                         <div class="mb-3">
                             <label class="form-label">Nova Senha</label>
                             <input type="password" class="form-control" id="novaSenha" name="nova_senha" required>
@@ -901,7 +854,7 @@
                         <div class="mb-3">
                             <label class="form-label">Confirmar Nova Senha</label>
                             <input type="password" class="form-control" id="confirmarSenha" name="confirmar_senha" required>
-                            <div class="invalid-feedback" id="passwordMismatch">
+                            <div class="error-message" id="passwordMismatch" style="display: none;">
                                 As senhas não coincidem.
                             </div>
                         </div>
@@ -916,8 +869,27 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
+        // Dados do usuário para simulação
+        const userData = {
+            id: 3,
+            nome: "Ana Santos",
+            username: "ana.santos",
+            email: "ana.santos@empresa.com",
+            telemovel: "+244 934 567 890",
+            data_nascimento: "22/04/1990",
+            bilhete_identidade: "7654321LA022",
+            bairro: "Kilamba",
+            cidade: "Luanda",
+            municipio: "Luanda",
+            provincia: "Luanda",
+            is_superuser: false,
+            is_staff: true,
+            is_active: true,
+            date_joined: "10/05/2023 14:20",
+            last_login: "Ontem, 16:45"
+        };
+
         // Gerenciamento da sidebar responsiva
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -1003,14 +975,144 @@
                 }
             }
             
-            // Elementos do modal de redefinir senha
-            const modalRedefinirSenha = document.getElementById('redefinirSenhaModal');
-            const formRedefinirSenha = document.getElementById('formRedefinirSenha');
-            const btnRedefinirSenha = document.getElementById('btnRedefinirSenha');
+            // Inicializar dados do usuário
+            initializeUserData();
+            
+            // Configurar validação de senha
+            setupPasswordValidation();
+            
+            // Configurar navegação
+            setupNavigation();
+            
+            // Configurar formulário principal
+            setupMainForm();
+        });
+        
+        // Suporte para teclado nos dropdowns
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSidebar();
+                const modals = document.querySelectorAll('.modal.show');
+                modals.forEach(modal => {
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) bsModal.hide();
+                });
+            }
+        });
+
+        // Função para inicializar dados do usuário
+        function initializeUserData() {
+            // Atualizar elementos da página
+            document.getElementById('editingUserName').textContent = userData.nome;
+            document.getElementById('userDetailLink').textContent = userData.nome;
+            document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.nome)}&background=667eea&color=fff&size=100`;
+            
+            // Preencher formulário
+            document.getElementById('username').value = userData.username;
+            document.getElementById('email').value = userData.email;
+            document.getElementById('nome').value = userData.nome;
+            document.getElementById('telemovel').value = userData.telemovel;
+            
+            // Formatar data para input type="date"
+            if (userData.data_nascimento) {
+                const [day, month, year] = userData.data_nascimento.split('/');
+                document.getElementById('data_nascimento').value = `${year}-${month}-${day}`;
+            }
+            
+            document.getElementById('bilhete_identidade').value = userData.bilhete_identidade;
+            document.getElementById('bairro').value = userData.bairro;
+            document.getElementById('cidade').value = userData.cidade;
+            document.getElementById('municipio').value = userData.municipio;
+            document.getElementById('provincia').value = userData.provincia;
+            document.getElementById('is_staff').checked = userData.is_staff;
+            document.getElementById('is_superuser').checked = userData.is_superuser;
+            document.getElementById('is_active').checked = userData.is_active;
+            
+            // Atualizar badges
+            updateUserBadges();
+        }
+
+        // Função para atualizar badges do usuário
+        function updateUserBadges() {
+            const badgesContainer = document.getElementById('userBadges');
+            badgesContainer.innerHTML = '';
+            
+            if (userData.is_superuser) {
+                badgesContainer.innerHTML += '<span class="badge bg-danger me-1">Admin</span>';
+            } else if (userData.is_staff) {
+                badgesContainer.innerHTML += '<span class="badge bg-warning me-1">Staff</span>';
+            } else {
+                badgesContainer.innerHTML += '<span class="badge bg-secondary me-1">Usuário</span>';
+            }
+            
+            badgesContainer.innerHTML += `<span class="badge bg-${userData.is_active ? 'success' : 'danger'}">
+                ${userData.is_active ? 'Ativo' : 'Inativo'}
+            </span>`;
+        }
+
+        // Função para mostrar alerta
+        function showAlert(message, type) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const alertMessage = document.getElementById('alertMessage');
+            const alertText = document.getElementById('alertText');
+            
+            // Configurar alerta
+            alertMessage.className = `alert alert-${type} alert-dismissible fade show`;
+            alertText.textContent = message;
+            
+            // Mostrar container
+            messagesContainer.style.display = 'block';
+            
+            // Rolagem suave para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (messagesContainer.style.display !== 'none') {
+                    closeAlert();
+                }
+            }, 5000);
+        }
+
+        // Função para fechar alerta
+        function closeAlert() {
+            document.getElementById('messagesContainer').style.display = 'none';
+        }
+
+        // Função para limpar todos os erros do formulário
+        function clearAllErrors() {
+            // Limpar mensagens de erro
+            document.querySelectorAll('.error-message').forEach(element => {
+                element.style.display = 'none';
+                element.textContent = '';
+            });
+            
+            // Remover destaque de erro dos campos
+            document.querySelectorAll('.form-control').forEach(field => {
+                field.classList.remove('is-invalid');
+            });
+        }
+
+        // Função para mostrar erro em campo específico
+        function showFieldError(fieldId, errorMessage) {
+            const errorElement = document.getElementById(`${fieldId}Error`);
+            if (errorElement) {
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = 'block';
+                
+                // Destacar campo com erro
+                const field = document.getElementById(fieldId);
+                field.classList.add('is-invalid');
+            }
+        }
+
+        // Configurar validação de senha
+        function setupPasswordValidation() {
             const novaSenhaInput = document.getElementById('novaSenha');
             const confirmarSenhaInput = document.getElementById('confirmarSenha');
             const passwordStrength = document.getElementById('passwordStrength');
             const passwordMismatch = document.getElementById('passwordMismatch');
+            const btnRedefinirSenha = document.getElementById('btnRedefinirSenha');
             
             // Verificar força da senha
             novaSenhaInput.addEventListener('input', function() {
@@ -1072,102 +1174,159 @@
                 btnRedefinirSenha.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Redefinindo...';
                 btnRedefinirSenha.disabled = true;
                 
-                // Enviar requisição
-                const formData = new FormData(formRedefinirSenha);
-                formData.append('user_id', '{{ usuario.id }}');
-                
-                fetch("{% url 'redefinir_senha_admin' %}", {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
+                // Simular requisição ao servidor
+                setTimeout(() => {
+                    // Fechar modal e mostrar sucesso
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('redefinirSenhaModal'));
+                    modal.hide();
+                    
                     // Restaurar botão
                     btnRedefinirSenha.innerHTML = originalText;
                     btnRedefinirSenha.disabled = false;
                     
-                    if (data.success) {
-                        // Fechar modal e mostrar sucesso
-                        const modal = bootstrap.Modal.getInstance(modalRedefinirSenha);
-                        modal.hide();
-                        
-                        // Limpar formulário
-                        formRedefinirSenha.reset();
-                        passwordStrength.className = 'password-strength';
-                        
-                        showAlert('Senha redefinida com sucesso!', 'success');
-                    } else {
-                        // Mostrar erros
-                        if (data.errors) {
-                            let errorMessages = [];
-                            for (let field in data.errors) {
-                                errorMessages = errorMessages.concat(data.errors[field]);
-                            }
-                            showAlert('Erro: ' + errorMessages.join(', '), 'danger');
-                        } else {
-                            showAlert('Erro ao redefinir senha.', 'danger');
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Restaurar botão
-                    btnRedefinirSenha.innerHTML = originalText;
-                    btnRedefinirSenha.disabled = false;
-                    showAlert('Erro de conexão.', 'danger');
-                });
+                    // Limpar formulário
+                    document.getElementById('formRedefinirSenha').reset();
+                    passwordStrength.className = 'password-strength';
+                    
+                    showAlert('Senha redefinida com sucesso!', 'success');
+                    
+                }, 1500);
             });
-            
-            // Validação do formulário principal
-            const formEditarUsuario = document.getElementById('formEditarUsuario');
-            formEditarUsuario.addEventListener('submit', function(e) {
-                // Adicionar validação personalizada se necessário
-                console.log('Formulário de edição de usuário submetido');
-            });
-        });
-
-        // Função para mostrar alertas
-        function showAlert(message, type) {
-            // Remover alertas existentes
-            const alertasExistentes = document.querySelectorAll('.alert');
-            alertasExistentes.forEach(alerta => alerta.remove());
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            document.body.appendChild(alertDiv);
-            
-            // Auto-remover após 5 segundos
-            setTimeout(() => {
-                if (alertDiv.parentElement) {
-                    alertDiv.remove();
-                }
-            }, 5000);
         }
 
-        // Função para obter cookie CSRF
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
+        // Configurar navegação
+        function setupNavigation() {
+            // Botão voltar
+            document.getElementById('backButton').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Voltar para os detalhes do usuário? As alterações não salvas serão perdidas.')) {
+                    window.location.href = 'detalhes-usuario.html';
                 }
-            }
-            return cookieValue;
+            });
+            
+            // Botão cancelar
+            document.getElementById('cancelButton').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Cancelar edição? As alterações não salvas serão perdidas.')) {
+                    window.location.href = 'detalhes-usuario.html';
+                }
+            });
+            
+            // Botão voltar à lista
+            document.getElementById('backToListButton').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Voltar para a lista de usuários? As alterações não salvas serão perdidas.')) {
+                    window.location.href = 'lista-usuarios.html';
+                }
+            });
+            
+            // Link do breadcrumb
+            document.getElementById('userDetailLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Voltar para os detalhes do usuário? As alterações não salvas serão perdidas.')) {
+                    window.location.href = 'detalhes-usuario.html';
+                }
+            });
+        }
+
+        // Configurar formulário principal
+        function setupMainForm() {
+            const formEditarUsuario = document.getElementById('formEditarUsuario');
+            
+            formEditarUsuario.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Limpar erros anteriores
+                clearAllErrors();
+                
+                // Coletar dados do formulário
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Converter checkboxes para boolean
+                data.is_staff = document.getElementById('is_staff').checked;
+                data.is_superuser = document.getElementById('is_superuser').checked;
+                data.is_active = document.getElementById('is_active').checked;
+                
+                // Validações
+                let hasErrors = false;
+                const errors = {};
+                
+                // Username (obrigatório)
+                if (!data.username || data.username.trim().length < 3) {
+                    errors.username = 'Nome de usuário deve ter pelo menos 3 caracteres.';
+                    hasErrors = true;
+                }
+                
+                // Email (obrigatório)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!data.email || !emailRegex.test(data.email)) {
+                    errors.email = 'Por favor, insira um email válido.';
+                    hasErrors = true;
+                }
+                
+                // Nome (obrigatório)
+                if (!data.nome || data.nome.trim().length < 2) {
+                    errors.nome = 'Nome completo é obrigatório.';
+                    hasErrors = true;
+                }
+                
+                // Se houver erros, mostrá-los
+                if (hasErrors) {
+                    for (const [field, errorMessage] of Object.entries(errors)) {
+                        showFieldError(field, errorMessage);
+                    }
+                    showAlert('Por favor, corrija os erros no formulário.', 'danger');
+                    return;
+                }
+                
+                // Atualizar dados do usuário
+                userData.username = data.username;
+                userData.email = data.email;
+                userData.nome = data.nome;
+                userData.telemovel = data.telemovel;
+                userData.data_nascimento = formatDateToDisplay(data.data_nascimento);
+                userData.bilhete_identidade = data.bilhete_identidade;
+                userData.bairro = data.bairro;
+                userData.cidade = data.cidade;
+                userData.municipio = data.municipio;
+                userData.provincia = data.provincia;
+                userData.is_staff = data.is_staff;
+                userData.is_superuser = data.is_superuser;
+                userData.is_active = data.is_active;
+                
+                // Simular envio do formulário
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Atualizando...';
+                submitButton.disabled = true;
+                
+                setTimeout(() => {
+                    // Atualizar avatar e badges
+                    document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.nome)}&background=667eea&color=fff&size=100`;
+                    updateUserBadges();
+                    
+                    // Restaurar botão
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                    
+                    // Mostrar mensagem de sucesso
+                    showAlert('Usuário atualizado com sucesso!', 'success');
+                    
+                    // Opcional: redirecionar após 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'detalhes-usuario.html';
+                    }, 2000);
+                    
+                }, 1500);
+            });
+        }
+
+        // Função para formatar data para exibição
+        function formatDateToDisplay(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-PT');
         }
     </script>
 </body>
