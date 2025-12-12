@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balanço {{ balanco.loja.nome }} - MAJOBFIL</title>
+    <title>Detalhes do Balanço - MAJOBFIL</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -666,19 +666,6 @@
             background: var(--secondary);
         }
         
-        /* Acessibilidade */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-        
         /* Focus styles para acessibilidade */
         a:focus,
         button:focus,
@@ -687,64 +674,6 @@
         textarea:focus {
             outline: 2px solid var(--primary);
             outline-offset: 2px;
-        }
-        
-        /* Print styles */
-        @media print {
-            .sidebar,
-            .sidebar-toggle,
-            .top-bar-actions,
-            .btn,
-            .dropdown,
-            .modal,
-            .pagination,
-            .servico-financeiro-card:hover {
-                display: none !important;
-            }
-            
-            .main-content {
-                margin-left: 0 !important;
-                padding: 0 !important;
-            }
-            
-            .stats-card,
-            .user-card {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-            }
-            
-            .table {
-                min-width: auto;
-                font-size: 10pt !important;
-            }
-            
-            .table th,
-            .table td {
-                padding: 4px !important;
-            }
-            
-            .top-bar {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-                margin-bottom: 15px !important;
-            }
-            
-            .servico-financeiro-card {
-                border: 1px solid #ddd !important;
-            }
-        }
-        
-        /* Melhorias para progress bars */
-        .progress-bar.bg-success {
-            background-color: var(--success) !important;
-        }
-        
-        .progress-bar.bg-warning {
-            background-color: var(--warning) !important;
-        }
-        
-        .progress-bar.bg-danger {
-            background-color: var(--danger) !important;
         }
         
         /* Layout para cards de serviços */
@@ -796,22 +725,20 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
+                    <a class="nav-link" href="../index.html">
                         <i class="fas fa-home"></i><span>Dashboard</span>
                     </a>
                 </li>
-                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'lista_balancos' %}">
+                    <a class="nav-link active" href="lista_balancos.html">
                         <i class="fas fa-balance-scale"></i><span>Gerenciar Balanços</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'listar_todos_itens' %}">
+                    <a class="nav-link" href="estoque/listar_movimentos_estoque.html">
                         <i class="fas fa-box"></i><span>Gerenciar Produtos</span>
                     </a>
                 </li>
-                {% endif %}
             </ul>
         </div>
     </div>
@@ -824,16 +751,16 @@
                 <div>
                     <h3 class="mb-1">Detalhes do Balanço</h3>
                     <p class="mb-0 text-muted">
-                        {{ balanco.loja.nome }} - {{ balanco.data_inicio|date:"d/m/Y" }} até {{ balanco.data_fim|date:"d/m/Y" }}
+                        Loja_1 - 01/04/2024 até 30/04/2024
                     </p>
                 </div>
                 <div class="top-bar-actions">
-                    <a href="{% url 'lista_balancos' %}" class="btn btn-outline-secondary">
+                    <a href="#" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i><span class="d-none d-sm-inline">Voltar</span>
                     </a>
                     <span class="text-muted">
                         <i class="fas fa-user me-2"></i>
-                        <span class="d-none d-sm-inline">{{ user.nome|default:user.username }}</span>
+                        <span class="d-none d-sm-inline">Ndombaxi Mantuidi</span>
                     </span>
                 </div>
             </div>
@@ -846,8 +773,8 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Vendas</h5>
-                            <h2 class="mb-0">Kz {{ balanco.total_vendas_geral|default:0|floatformat:2 }}</h2>
-                            <small>{{ balanco.total_transacoes|default:0 }} transações</small>
+                            <h2 class="mb-0">Kz 850.450</h2>
+                            <small>127 transações</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
                             <i class="fas fa-shopping-cart fa-3x opacity-50"></i>
@@ -861,7 +788,7 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Geral</h5>
-                            <h2 class="mb-0">Kz {{ dados_relatorios.total_geral|default:0|floatformat:2 }}</h2>
+                            <h2 class="mb-0">Kz 650.230</h2>
                             <small>Relatórios consolidados</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
@@ -876,7 +803,7 @@
                     <div class="row">
                         <div class="col-8">
                             <h5>Total Arrecadado</h5>
-                            <h2 class="mb-0">Kz {{ dados_relatorios.total_arrecadado|default:0|floatformat:2 }}</h2>
+                            <h2 class="mb-0">Kz 520.180</h2>
                             <small>Entrada real no caixa</small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
@@ -886,24 +813,16 @@
                 </div>
             </div>
 
-            <div class="card stats-card {% if dados_relatorios.status_balanco == 'positivo' %}card-warning{% else %}card-danger{% endif %} text-white">
+            <div class="card stats-card card-warning text-white">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-8">
                             <h5>Balanço Final</h5>
                             <h2 class="mb-0">
-                                {% if dados_relatorios.status_balanco == 'positivo' %}
-                                +Kz {{ dados_relatorios.diferenca_balanco|default:0|floatformat:2 }}
-                                {% else %}
-                                -Kz {{ dados_relatorios.diferenca_balanco|default:0|floatformat:2 }}
-                                {% endif %}
+                                -Kz 130.050
                             </h2>
                             <small>
-                                {% if dados_relatorios.status_balanco == 'positivo' %}
-                                <i class="fas fa-check-circle"></i> Positivo
-                                {% else %}
                                 <i class="fas fa-exclamation-triangle"></i> Falta
-                                {% endif %}
                             </small>
                         </div>
                         <div class="col-4 text-end d-none d-sm-block">
@@ -929,44 +848,36 @@
                                     <i class="fas fa-satellite-dish"></i>
                                 </div>
                                 <h4>DSTV</h4>
-                                <h3 class="my-3">Kz {{ dados_relatorios.dstv.total|default:0|floatformat:2 }}</h3>
+                                <h3 class="my-3">Kz 45.750</h3>
                                 
                                 <div class="servico-detalhes">
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Início DSTV</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.dstv.inicio|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 10.000</span>
                                     </div>
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Resto DSTV</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.dstv.resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 15.250</span>
                                     </div>
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Sem Resto</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.dstv.sem_resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 12.500</span>
                                     </div>
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Com 5%</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.dstv.com_5_percent|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 8.000</span>
                                     </div>
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Diferença</span>
-                                        <span class="detalhe-valor {% if dados_relatorios.dstv.status == 'positivo' %}valor-positivo{% else %}valor-negativo{% endif %}">
-                                            {% if dados_relatorios.dstv.status == 'positivo' %}
-                                            +Kz {{ dados_relatorios.dstv.diferenca|default:0|floatformat:2 }}
-                                            {% else %}
-                                            -Kz {{ dados_relatorios.dstv.diferenca|default:0|floatformat:2 }}
-                                            {% endif %}
+                                        <span class="detalhe-valor valor-negativo">
+                                            -Kz 5.250
                                         </span>
                                     </div>
                                 </div>
                                 
                                 <div class="mt-3">
-                                    <span class="status-badge {% if dados_relatorios.dstv.status == 'positivo' %}bg-success{% else %}bg-danger{% endif %}">
-                                        {% if dados_relatorios.dstv.status == 'positivo' %}
-                                        <i class="fas fa-check me-1"></i>Positivo
-                                        {% else %}
+                                    <span class="status-badge bg-danger">
                                         <i class="fas fa-exclamation-triangle me-1"></i>Falta
-                                        {% endif %}
                                     </span>
                                 </div>
                             </div>
@@ -977,16 +888,16 @@
                                     <i class="fas fa-broadcast-tower"></i>
                                 </div>
                                 <h4>ZAP</h4>
-                                <h3 class="my-3">Kz {{ dados_relatorios.zap.total|default:0|floatformat:2 }}</h3>
+                                <h3 class="my-3">Kz 28.500</h3>
                                 
                                 <div class="servico-detalhes">
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Resto ZAP</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.zap.resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 12.000</span>
                                     </div>
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Sem Resto</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.zap.sem_resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 16.500</span>
                                     </div>
                                 </div>
                                 
@@ -1017,16 +928,16 @@
                                     <i class="fas fa-sim-card"></i>
                                 </div>
                                 <h4>UNITEL</h4>
-                                <h3 class="my-3">Kz {{ dados_relatorios.unitel.total|default:0|floatformat:2 }}</h3>
+                                <h3 class="my-3">Kz 85.400</h3>
                                 
                                 <div class="servico-detalhes">
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Resto Unitel</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.unitel.resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 42.000</span>
                                     </div>
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Sem Resto</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.unitel.sem_resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 43.400</span>
                                     </div>
                                 </div>
                                 
@@ -1043,16 +954,16 @@
                                     <i class="fas fa-sim-card"></i>
                                 </div>
                                 <h4>AFRICELL</h4>
-                                <h3 class="my-3">Kz {{ dados_relatorios.africell.total|default:0|floatformat:2 }}</h3>
+                                <h3 class="my-3">Kz 32.150</h3>
                                 
                                 <div class="servico-detalhes">
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Resto Africell</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.africell.resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 15.000</span>
                                     </div>
                                     <div class="detalhe-item">
                                         <span class="detalhe-label">Sem Resto</span>
-                                        <span class="detalhe-valor">Kz {{ dados_relatorios.africell.sem_resto|default:0|floatformat:2 }}</span>
+                                        <span class="detalhe-valor">Kz 17.150</span>
                                     </div>
                                 </div>
                                 
@@ -1082,7 +993,7 @@
                                     <i class="fas fa-money-bill-wave"></i>
                                 </div>
                                 <h5>DM</h5>
-                                <h4 class="my-2">Kz {{ dados_relatorios.dm|default:0|floatformat:2 }}</h4>
+                                <h4 class="my-2">Kz 320.500</h4>
                                 <small class="opacity-75">Dinheiro em espécie</small>
                             </div>
                             <div class="servico-financeiro-card" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
@@ -1090,7 +1001,7 @@
                                     <i class="fas fa-coins"></i>
                                 </div>
                                 <h5>Moedas</h5>
-                                <h4 class="my-2">Kz {{ dados_relatorios.moedas|default:0|floatformat:2 }}</h4>
+                                <h4 class="my-2">Kz 8.450</h4>
                                 <small class="opacity-75">Moedas recebidas</small>
                             </div>
                             <div class="servico-financeiro-card" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
@@ -1098,7 +1009,7 @@
                                     <i class="fas fa-credit-card"></i>
                                 </div>
                                 <h5>TPA</h5>
-                                <h4 class="my-2">Kz {{ dados_relatorios.tpa|default:0|floatformat:2 }}</h4>
+                                <h4 class="my-2">Kz 85.230</h4>
                                 <small class="opacity-75">Pagamentos por cartão</small>
                             </div>
                             <div class="servico-financeiro-card" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">
@@ -1106,7 +1017,7 @@
                                     <i class="fas fa-receipt"></i>
                                 </div>
                                 <h5>Gastos</h5>
-                                <h4 class="my-2">Kz {{ dados_relatorios.gastos|default:0|floatformat:2 }}</h4>
+                                <h4 class="my-2">Kz 45.800</h4>
                                 <small class="opacity-75">Despesas operacionais</small>
                             </div>
                         </div>
@@ -1121,10 +1032,9 @@
                 <div class="card stats-card">
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <h5 class="card-title mb-0"><i class="fas fa-cube me-2"></i>Top 10 Produtos</h5>
-                        <span class="badge bg-primary">{{ top_produtos|length }} produtos</span>
+                        <span class="badge bg-primary">10 produtos</span>
                     </div>
                     <div class="card-body">
-                        {% if top_produtos %}
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
                                 <thead>
@@ -1139,31 +1049,139 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for produto in top_produtos %}
                                     <tr>
-                                        <td class="fw-bold">{{ forloop.counter }}</td>
+                                        <td class="fw-bold">1</td>
                                         <td>
-                                            <strong>{{ produto.nome|default:"Produto não identificado" }}</strong>
+                                            <strong>Água Mineral 1,5L</strong>
                                         </td>
-                                        <td class="text-end">Kz {{ produto.preco_unitario|default:0|floatformat:2 }}</td>
-                                        <td class="text-end">{{ produto.total_vendido|default:0 }}</td>
+                                        <td class="text-end">Kz 200.00</td>
+                                        <td class="text-end">450</td>
                                         <td class="text-end">
-                                            <span class="fw-bold valor-destaque">Kz {{ produto.total_valor|default:0|floatformat:2 }}</span>
+                                            <span class="fw-bold valor-destaque">Kz 90.000</span>
                                         </td>
-                                        <td class="text-end">{{ produto.numero_vendas|default:0 }}</td>
-                                        <td class="text-end">Kz {{ produto.media_venda|default:0|floatformat:2 }}</td>
+                                        <td class="text-end">120</td>
+                                        <td class="text-end">Kz 750.00</td>
                                     </tr>
-                                    {% endfor %}
+                                    <tr>
+                                        <td class="fw-bold">2</td>
+                                        <td>
+                                            <strong>Refrigerante Coca-Cola 2L</strong>
+                                        </td>
+                                        <td class="text-end">Kz 500.00</td>
+                                        <td class="text-end">180</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 90.000</span>
+                                        </td>
+                                        <td class="text-end">90</td>
+                                        <td class="text-end">Kz 1.000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">3</td>
+                                        <td>
+                                            <strong>Arroz 5kg</strong>
+                                        </td>
+                                        <td class="text-end">Kz 1.500.00</td>
+                                        <td class="text-end">50</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 75.000</span>
+                                        </td>
+                                        <td class="text-end">45</td>
+                                        <td class="text-end">Kz 1.667.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">4</td>
+                                        <td>
+                                            <strong>Óleo Alimentar 1L</strong>
+                                        </td>
+                                        <td class="text-end">Kz 800.00</td>
+                                        <td class="text-end">85</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 68.000</span>
+                                        </td>
+                                        <td class="text-end">75</td>
+                                        <td class="text-end">Kz 906.67</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">5</td>
+                                        <td>
+                                            <strong>Leite UHT 1L</strong>
+                                        </td>
+                                        <td class="text-end">Kz 600.00</td>
+                                        <td class="text-end">100</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 60.000</span>
+                                        </td>
+                                        <td class="text-end">85</td>
+                                        <td class="text-end">Kz 705.88</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">6</td>
+                                        <td>
+                                            <strong>Sabão em Pó 1kg</strong>
+                                        </td>
+                                        <td class="text-end">Kz 700.00</td>
+                                        <td class="text-end">70</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 49.000</span>
+                                        </td>
+                                        <td class="text-end">65</td>
+                                        <td class="text-end">Kz 753.85</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">7</td>
+                                        <td>
+                                            <strong>Atum em Lata</strong>
+                                        </td>
+                                        <td class="text-end">Kz 400.00</td>
+                                        <td class="text-end">110</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 44.000</span>
+                                        </td>
+                                        <td class="text-end">95</td>
+                                        <td class="text-end">Kz 463.16</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">8</td>
+                                        <td>
+                                            <strong>Massas 500g</strong>
+                                        </td>
+                                        <td class="text-end">Kz 350.00</td>
+                                        <td class="text-end">120</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 42.000</span>
+                                        </td>
+                                        <td class="text-end">105</td>
+                                        <td class="text-end">Kz 400.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">9</td>
+                                        <td>
+                                            <strong>Chávenas</strong>
+                                        </td>
+                                        <td class="text-end">Kz 250.00</td>
+                                        <td class="text-end">150</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 37.500</span>
+                                        </td>
+                                        <td class="text-end">130</td>
+                                        <td class="text-end">Kz 288.46</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">10</td>
+                                        <td>
+                                            <strong>Biscoitos</strong>
+                                        </td>
+                                        <td class="text-end">Kz 150.00</td>
+                                        <td class="text-end">200</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 30.000</span>
+                                        </td>
+                                        <td class="text-end">180</td>
+                                        <td class="text-end">Kz 166.67</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
-                        {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-box-open"></i>
-                            <h5>Nenhum produto vendido</h5>
-                            <p class="text-muted">Não foram registradas vendas de produtos no período selecionado.</p>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -1175,10 +1193,9 @@
                 <div class="card stats-card">
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <h5 class="card-title mb-0"><i class="fas fa-mobile-alt me-2"></i>Top 10 Recargas</h5>
-                        <span class="badge bg-success">{{ top_recargas|length }} recargas</span>
+                        <span class="badge bg-success">10 recargas</span>
                     </div>
                     <div class="card-body">
-                        {% if top_recargas %}
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
                                 <thead>
@@ -1193,31 +1210,139 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for recarga in top_recargas %}
                                     <tr>
-                                        <td class="fw-bold">{{ forloop.counter }}</td>
+                                        <td class="fw-bold">1</td>
                                         <td>
-                                            <strong>{{ recarga.nome|default:"Recarga não identificada" }}</strong>
+                                            <strong>Unitel 500Kz</strong>
                                         </td>
-                                        <td class="text-end">Kz {{ recarga.preco_unitario|default:0|floatformat:2 }}</td>
-                                        <td class="text-end">{{ recarga.total_vendido|default:0 }}</td>
+                                        <td class="text-end">Kz 500.00</td>
+                                        <td class="text-end">280</td>
                                         <td class="text-end">
-                                            <span class="fw-bold valor-destaque">Kz {{ recarga.total_valor|default:0|floatformat:2 }}</span>
+                                            <span class="fw-bold valor-destaque">Kz 140.000</span>
                                         </td>
-                                        <td class="text-end">{{ recarga.numero_vendas|default:0 }}</td>
-                                        <td class="text-end">Kz {{ recarga.media_venda|default:0|floatformat:2 }}</td>
+                                        <td class="text-end">250</td>
+                                        <td class="text-end">Kz 560.00</td>
                                     </tr>
-                                    {% endfor %}
+                                    <tr>
+                                        <td class="fw-bold">2</td>
+                                        <td>
+                                            <strong>Unitel 1000Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 1.000.00</td>
+                                        <td class="text-end">120</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 120.000</span>
+                                        </td>
+                                        <td class="text-end">110</td>
+                                        <td class="text-end">Kz 1.090.91</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">3</td>
+                                        <td>
+                                            <strong>Africell 500Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 500.00</td>
+                                        <td class="text-end">200</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 100.000</span>
+                                        </td>
+                                        <td class="text-end">180</td>
+                                        <td class="text-end">Kz 555.56</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">4</td>
+                                        <td>
+                                            <strong>Unitel 200Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 200.00</td>
+                                        <td class="text-end">400</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 80.000</span>
+                                        </td>
+                                        <td class="text-end">350</td>
+                                        <td class="text-end">Kz 228.57</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">5</td>
+                                        <td>
+                                            <strong>Africell 1000Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 1.000.00</td>
+                                        <td class="text-end">75</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 75.000</span>
+                                        </td>
+                                        <td class="text-end">70</td>
+                                        <td class="text-end">Kz 1.071.43</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">6</td>
+                                        <td>
+                                            <strong>Unitel 100Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 100.00</td>
+                                        <td class="text-end">500</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 50.000</span>
+                                        </td>
+                                        <td class="text-end">450</td>
+                                        <td class="text-end">Kz 111.11</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">7</td>
+                                        <td>
+                                            <strong>Africell 200Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 200.00</td>
+                                        <td class="text-end">200</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 40.000</span>
+                                        </td>
+                                        <td class="text-end">180</td>
+                                        <td class="text-end">Kz 222.22</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">8</td>
+                                        <td>
+                                            <strong>Unitel 5000Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 5.000.00</td>
+                                        <td class="text-end">15</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 75.000</span>
+                                        </td>
+                                        <td class="text-end">12</td>
+                                        <td class="text-end">Kz 6.250.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">9</td>
+                                        <td>
+                                            <strong>Africell 100Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 100.00</td>
+                                        <td class="text-end">300</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 30.000</span>
+                                        </td>
+                                        <td class="text-end">280</td>
+                                        <td class="text-end">Kz 107.14</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">10</td>
+                                        <td>
+                                            <strong>Unitel 50Kz</strong>
+                                        </td>
+                                        <td class="text-end">Kz 50.00</td>
+                                        <td class="text-end">400</td>
+                                        <td class="text-end">
+                                            <span class="fw-bold valor-destaque">Kz 20.000</span>
+                                        </td>
+                                        <td class="text-end">380</td>
+                                        <td class="text-end">Kz 52.63</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
-                        {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-mobile"></i>
-                            <h5>Nenhuma recarga vendida</h5>
-                            <p class="text-muted">Não foram registradas vendas de recargas no período selecionado.</p>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -1231,16 +1356,15 @@
                         <div>
                             <h5 class="card-title mb-0"><i class="fas fa-calendar-day me-2"></i>Vendas por Dia - Detalhado</h5>
                             <small class="text-muted">
-                                Mostrando {{ detalhes_vendas.start_index }} - {{ detalhes_vendas.end_index }} de {{ detalhes_vendas.paginator.count }} dias
+                                Mostrando 1 - 10 de 30 dias
                             </small>
                         </div>
                         <div>
-                            <span class="badge bg-info">{{ detalhes_vendas.paginator.count }} dias totais</span>
-                            <span class="badge bg-secondary ms-1">30 por página</span>
+                            <span class="badge bg-info">30 dias totais</span>
+                            <span class="badge bg-secondary ms-1">10 por página</span>
                         </div>
                     </div>
                     <div class="card-body">
-                        {% if detalhes_vendas %}
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
                                 <thead>
@@ -1254,138 +1378,199 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for venda_dia in detalhes_vendas %}
                                     <tr>
-                                        <td><strong>{{ venda_dia.data|default:"-" }}</strong></td>
+                                        <td><strong>01/04/2024</strong></td>
                                         <td class="text-end">
-                                            <strong class="valor-destaque">Kz {{ venda_dia.total|default:0|floatformat:2 }}</strong>
+                                            <strong class="valor-destaque">Kz 32.450</strong>
                                         </td>
                                         <td class="text-end">
                                             <div>
-                                                <strong>Kz {{ venda_dia.produtos.total|default:0|floatformat:2 }}</strong>
+                                                <strong>Kz 18.200</strong>
                                                 <br>
-                                                <small class="text-muted">{{ venda_dia.produtos.quantidade|default:0 }} vendas</small>
+                                                <small class="text-muted">45 vendas</small>
                                             </div>
                                         </td>
                                         <td class="text-end">
                                             <div>
-                                                <strong>Kz {{ venda_dia.recargas.total|default:0|floatformat:2 }}</strong>
+                                                <strong>Kz 14.250</strong>
                                                 <br>
-                                                <small class="text-muted">{{ venda_dia.recargas.quantidade|default:0 }} vendas</small>
+                                                <small class="text-muted">38 vendas</small>
                                             </div>
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge bg-primary">{{ venda_dia.total_transacoes|default:0 }}</span>
+                                            <span class="badge bg-primary">83</span>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="progress flex-grow-1 me-2" style="width: 100px;">
-                                                    {% with total=venda_dia.total|default:0 %}
-                                                    {% widthratio total 2000 100 as percent %}
-                                                    <div class="progress-bar 
-                                                        {% if total > 1000 %}bg-success
-                                                        {% elif total > 500 %}bg-warning
-                                                        {% else %}bg-danger{% endif %}" 
-                                                        style="width: {% if percent > 100 %}100{% else %}{{ percent }}{% endif %}%">
-                                                    </div>
-                                                    {% endwith %}
+                                                    <div class="progress-bar bg-success" style="width: 85%"></div>
                                                 </div>
-                                                <small class="text-muted">
-                                                    {% with total=venda_dia.total|default:0 %}
-                                                    {% widthratio total 2000 100 as percent %}
-                                                    {% if percent > 100 %}100{% else %}{{ percent }}{% endif %}%
-                                                    {% endwith %}
-                                                </small>
+                                                <small class="text-muted">85%</small>
                                             </div>
                                         </td>
                                     </tr>
-                                    {% endfor %}
+                                    <tr>
+                                        <td><strong>02/04/2024</strong></td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 28.150</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 15.800</strong>
+                                                <br>
+                                                <small class="text-muted">42 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 12.350</strong>
+                                                <br>
+                                                <small class="text-muted">35 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">77</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="width: 100px;">
+                                                    <div class="progress-bar bg-warning" style="width: 72%"></div>
+                                                </div>
+                                                <small class="text-muted">72%</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>03/04/2024</strong></td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 35.800</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 22.100</strong>
+                                                <br>
+                                                <small class="text-muted">52 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 13.700</strong>
+                                                <br>
+                                                <small class="text-muted">40 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">92</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="width: 100px;">
+                                                    <div class="progress-bar bg-success" style="width: 92%"></div>
+                                                </div>
+                                                <small class="text-muted">92%</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>04/04/2024</strong></td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 25.600</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 14.200</strong>
+                                                <br>
+                                                <small class="text-muted">38 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 11.400</strong>
+                                                <br>
+                                                <small class="text-muted">32 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">70</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="width: 100px;">
+                                                    <div class="progress-bar bg-warning" style="width: 65%"></div>
+                                                </div>
+                                                <small class="text-muted">65%</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>05/04/2024</strong></td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 40.200</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 24.800</strong>
+                                                <br>
+                                                <small class="text-muted">58 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <div>
+                                                <strong>Kz 15.400</strong>
+                                                <br>
+                                                <small class="text-muted">45 vendas</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">103</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="width: 100px;">
+                                                    <div class="progress-bar bg-success" style="width: 100%"></div>
+                                                </div>
+                                                <small class="text-muted">100%</small>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- Paginação -->
-                        {% if detalhes_vendas.paginator.num_pages > 1 %}
                         <nav aria-label="Navegação de páginas de vendas por dia">
                             <ul class="pagination justify-content-center mb-0">
                                 <!-- Botão Anterior -->
-                                {% if detalhes_vendas.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page_vendas={{ detalhes_vendas.previous_page_number }}#vendas-por-dia" aria-label="Anterior">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                {% else %}
                                 <li class="page-item disabled">
                                     <span class="page-link" aria-hidden="true">&laquo;</span>
                                 </li>
-                                {% endif %}
 
                                 <!-- Primeira página -->
-                                {% if detalhes_vendas.number > 3 %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page_vendas=1#vendas-por-dia">1</a>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link">...</span>
-                                </li>
-                                {% endif %}
-
-                                <!-- Páginas ao redor da atual -->
-                                {% for num in detalhes_vendas.paginator.page_range %}
-                                    {% if num >= detalhes_vendas.number|add:"-2" and num <= detalhes_vendas.number|add:"2" %}
-                                        {% if detalhes_vendas.number == num %}
-                                        <li class="page-item active">
-                                            <span class="page-link">{{ num }}</span>
-                                        </li>
-                                        {% else %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page_vendas={{ num }}#vendas-por-dia">{{ num }}</a>
-                                        </li>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-
-                                <!-- Última página -->
-                                {% if detalhes_vendas.number < detalhes_vendas.paginator.num_pages|add:"-2" %}
-                                <li class="page-item disabled">
-                                    <span class="page-link">...</span>
+                                <li class="page-item active">
+                                    <span class="page-link">1</span>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page_vendas={{ detalhes_vendas.paginator.num_pages }}#vendas-por-dia">{{ detalhes_vendas.paginator.num_pages }}</a>
+                                    <a class="page-link" href="#">2</a>
                                 </li>
-                                {% endif %}
+                                <li class="page-item">
+                                    <a class="page-link" href="#">3</a>
+                                </li>
 
                                 <!-- Botão Próximo -->
-                                {% if detalhes_vendas.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?page_vendas={{ detalhes_vendas.next_page_number }}#vendas-por-dia" aria-label="Próximo">
+                                    <a class="page-link" href="#" aria-label="Próximo">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
-                                {% else %}
-                                <li class="page-item disabled">
-                                    <span class="page-link" aria-hidden="true">&raquo;</span>
-                                </li>
-                                {% endif %}
                             </ul>
                             
                             <!-- Informação da página atual -->
                             <div class="text-center mt-2">
                                 <small class="text-muted">
-                                    Página {{ detalhes_vendas.number }} de {{ detalhes_vendas.paginator.num_pages }}
+                                    Página 1 de 3
                                 </small>
                             </div>
                         </nav>
-                        {% endif %}
-
-                        {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-calendar-times"></i>
-                            <h5>Nenhuma venda registrada</h5>
-                            <p class="text-muted">Não foram registradas vendas no período selecionado.</p>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -1397,10 +1582,9 @@
                 <div class="card stats-card">
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <h5 class="card-title mb-0"><i class="fas fa-users me-2"></i>Top Vendedores - Detalhado</h5>
-                        <span class="badge bg-warning">{{ top_vendedores|length }} vendedores</span>
+                        <span class="badge bg-warning">8 vendedores</span>
                     </div>
                     <div class="card-body">
-                        {% if top_vendedores %}
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
                                 <thead>
@@ -1416,55 +1600,149 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for vendedor in top_vendedores %}
                                     <tr>
-                                        <td class="fw-bold">{{ forloop.counter }}</td>
+                                        <td class="fw-bold">1</td>
                                         <td>
                                             <div>
-                                                <strong>{{ vendedor.nome|default:"Vendedor não identificado" }}</strong>
-                                                {% if vendedor.email %}
+                                                <strong>João Silva</strong>
                                                 <br>
-                                                <small class="text-muted">{{ vendedor.email }}</small>
-                                                {% endif %}
+                                                <small class="text-muted">joao.silva@email.com</small>
                                             </div>
                                         </td>
                                         <td class="text-end">
-                                            <span class="badge bg-primary">{{ vendedor.total_vendas|default:0 }}</span>
+                                            <span class="badge bg-primary">145</span>
                                         </td>
                                         <td class="text-end">
-                                            <strong class="valor-destaque">Kz {{ vendedor.total_valor|default:0|floatformat:2 }}</strong>
+                                            <strong class="valor-destaque">Kz 98.500</strong>
                                         </td>
                                         <td class="text-end">
-                                            <small>Kz {{ vendedor.media_venda|default:0|floatformat:2 }}</small>
+                                            <small>Kz 679.31</small>
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge bg-info">{{ vendedor.vendas_produtos|default:0 }}</span>
+                                            <span class="badge bg-info">85</span>
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge bg-success">{{ vendedor.vendas_recargas|default:0 }}</span>
+                                            <span class="badge bg-success">60</span>
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge 
-                                                {% if vendedor.performance == 'alta' %}bg-success
-                                                {% elif vendedor.performance == 'media' %}bg-warning
-                                                {% else %}bg-info{% endif %}">
-                                                {% if vendedor.performance == 'alta' %}Alta
-                                                {% elif vendedor.performance == 'media' %}Média
-                                                {% else %}Baixa{% endif %}
-                                            </span>
+                                            <span class="badge bg-success">Alta</span>
                                         </td>
                                     </tr>
-                                    {% endfor %}
+                                    <tr>
+                                        <td class="fw-bold">2</td>
+                                        <td>
+                                            <div>
+                                                <strong>Maria Santos</strong>
+                                                <br>
+                                                <small class="text-muted">maria.santos@email.com</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="badge bg-primary">132</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 87.200</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <small>Kz 660.61</small>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-info">78</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">54</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">Alta</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">3</td>
+                                        <td>
+                                            <div>
+                                                <strong>Pedro Almeida</strong>
+                                                <br>
+                                                <small class="text-muted">pedro.almeida@email.com</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="badge bg-primary">118</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 75.800</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <small>Kz 642.37</small>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-info">65</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">53</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-warning">Média</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">4</td>
+                                        <td>
+                                            <div>
+                                                <strong>Ana Costa</strong>
+                                                <br>
+                                                <small class="text-muted">ana.costa@email.com</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="badge bg-primary">105</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 68.400</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <small>Kz 651.43</small>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-info">62</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">43</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-warning">Média</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">5</td>
+                                        <td>
+                                            <div>
+                                                <strong>Carlos Mendes</strong>
+                                                <br>
+                                                <small class="text-muted">carlos.mendes@email.com</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="badge bg-primary">92</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong class="valor-destaque">Kz 58.900</strong>
+                                        </td>
+                                        <td class="text-end">
+                                            <small>Kz 640.22</small>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-info">55</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">37</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-warning">Média</span>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
-                        {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-user-times"></i>
-                            <h5>Nenhum vendedor com vendas</h5>
-                            <p class="text-muted">Não foram registradas vendas por vendedores no período selecionado.</p>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -1559,11 +1837,9 @@
             }
             
             // Adicionar classe active ao link atual na sidebar
-            const currentPath = window.location.pathname;
             const navLinks = document.querySelectorAll('.sidebar .nav-link');
-            
             navLinks.forEach(link => {
-                if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
+                if (link.classList.contains('active')) {
                     link.classList.add('active');
                 }
             });
@@ -1576,15 +1852,6 @@
                     btn.style.display = 'inline-flex';
                     btn.style.alignItems = 'center';
                     btn.style.justifyContent = 'center';
-                });
-                
-                // Aumentar área de toque para itens da tabela
-                document.querySelectorAll('.table td').forEach(td => {
-                    if (!td.querySelector('a, button, input')) {
-                        td.style.minHeight = '44px';
-                        td.style.display = 'flex';
-                        td.style.alignItems = 'center';
-                    }
                 });
             }
         });
@@ -1603,30 +1870,6 @@
             }
         }, { passive: true });
         
-        // Otimização de performance
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                // Redesenhar componentes se necessário
-            }, 250);
-        });
-        
-        // Suporte para impressão
-        window.addEventListener('beforeprint', () => {
-            // Ajustar tamanhos de fonte para impressão
-            document.querySelectorAll('.servico-financeiro-card h3').forEach(h3 => {
-                h3.style.fontSize = '1.5rem';
-            });
-        });
-        
-        window.addEventListener('afterprint', () => {
-            // Restaurar tamanhos de fonte
-            document.querySelectorAll('.servico-financeiro-card h3').forEach(h3 => {
-                h3.style.fontSize = '';
-            });
-        });
-        
         // Animações suaves para melhor UX
         document.addEventListener('DOMContentLoaded', () => {
             // Adicionar efeito de carregamento suave
@@ -1634,23 +1877,6 @@
                 document.body.style.opacity = '1';
                 document.body.style.transition = 'opacity 0.3s ease-in';
             }, 100);
-            
-            // Adicionar scroll suave para âncoras
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    if (targetId !== '#') {
-                        const targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            window.scrollTo({
-                                top: targetElement.offsetTop - 80,
-                                behavior: 'smooth'
-                            });
-                        }
-                    }
-                });
-            });
         });
         
         // Função para melhorar a leitura de valores em mobile
