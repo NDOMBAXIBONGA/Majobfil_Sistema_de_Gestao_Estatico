@@ -663,22 +663,20 @@
         <div class="mt-4">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
+                    <a class="nav-link" href="../index.html">
                         <i class="fas fa-home"></i><span>Dashboard</span>
                     </a>
                 </li>
-                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'lista_balancos' %}">
+                    <a class="nav-link active" href="lista_balancos.html">
                         <i class="fas fa-balance-scale"></i><span>Gerenciar Balanços</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'listar_produtos_estoque' %}">
+                    <a class="nav-link" href="estoque/listar_movimentos_estoque.html">
                         <i class="fas fa-box"></i><span>Gerenciar Estoque</span>
                     </a>
                 </li>
-                {% endif %}
             </ul>
         </div>
     </div>
